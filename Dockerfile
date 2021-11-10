@@ -10,6 +10,9 @@ RUN apt -y update
 #RUN apt -y upgrade
 #RUN apt -y install joe nmap build-essential libasound2 libasound2-dev
 
+# install Yoctopuce dependencies
+RUN apt-get -y install libusb-1.0.0 libusb-1.0.0-dev
+
 # Install Python dependencies
 RUN pip3 install pipenv
 COPY Pipfile* ./
