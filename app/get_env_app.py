@@ -5,10 +5,22 @@ def get_poll_secs():
     if 'POLL_SECS' in os.environ:
         poll_secs = int(os.environ['POLL_SECS'])
     else:
-        poll_secs = 300
+        poll_secs = 60
 
     return poll_secs
 
+
+def get_window_len():
+    """
+    Moving average window length
+    :return:
+    """
+    if 'WINDOW_LEN' in os.environ:
+        window_len = int(os.environ['WINDOW_LEN'])
+    else:
+        window_len = 5
+
+    return window_len
 
 # Actual wind vane height to allow for multiplier
 # def get_vane_height_m():

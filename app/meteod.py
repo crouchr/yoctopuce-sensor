@@ -10,7 +10,7 @@ from pprint import pprint
 
 import get_env_app
 import meteo2_sensor
-
+import moving_averages
 
 def main():
     try:
@@ -20,11 +20,17 @@ def main():
         port = get_env_app.get_mqttd_port()
         topic = get_env_app.get_mqttd_topic()
         poll_secs = get_env_app.get_poll_secs()
+        window_len = get_env_app.get_window_len()
 
         print('MQTT broker IP : ' + broker)
         print(f'MQTT broker port : {port}')
         print('MQTT topic : ' + topic)
         print(f'poll_secs : {poll_secs}')
+        print(f'window_len : {window_len}')
+
+        pressure_smoothed = moving_averages.MovingAverage(window_len)
+        temperature_smoothed = moving_averages.MovingAverage(window_len)
+        humidity_smoothed = moving_averages.MovingAverage(window_len)
 
         client1 = paho.Client("control1")  # create client object
         # client1.on_publish = on_publish                          #assign function to callback
@@ -39,17 +45,28 @@ def main():
         while True:
             humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor)
 
-            metrics['epoch'] = time.time()       # time the message was sent
+            pressure_smoothed.add(pressure)
+            humidity_smoothed.add(humidity)
+            temperature_smoothed.add(temperature)
+
+            metrics['epoch'] = time.time()              # time the message was sent
             metrics['timestamp'] = time.ctime()
-            metrics['temp'] = temperature
+            metrics['elevation_m'] = 0
+
+            metrics['temp_c'] = temperature               # sensor height above sea-level
             metrics['humidity'] = humidity
-            metrics['pressure'] = pressure
+            metrics['pressure_abs'] = pressure     # absolute i.e. not sea level
+            metrics['pressure_sea'] = -10          # not yet supported
+
+            metrics['temp_c_smoothed'] = temperature_smoothed.get_moving_average()
+            metrics['humidity_smoothed'] = humidity_smoothed.get_moving_average()
+            metrics['pressure_abs_smoothed'] = pressure_smoothed.get_moving_average()
 
             MQTT_MSG = json.dumps(metrics)
             pprint(metrics)
 
-            # publish data to MQTT topic
-            ret = client1.publish(topic, MQTT_MSG)
+            # publish payload to MQTT topic
+            ret = client1.publish(topic=topic, payload=MQTT_MSG)
             print(ret.__str__())
 
             time.sleep(poll_secs)
