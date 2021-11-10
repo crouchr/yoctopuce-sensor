@@ -66,7 +66,7 @@ def get_mqttd_host():
     :return:
     """
     if 'STAGE' in os.environ and os.environ['STAGE'] == 'PRD':
-        mqttd_host = 'mqttd'    # name of mqtt container
+        mqttd_host = 'mqttd'    # name of 'mqttd' container
     else:
         mqttd_host = 'j1900'    # IP of mqttd
 
