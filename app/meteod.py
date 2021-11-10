@@ -49,15 +49,20 @@ def main():
             humidity_smoothed.add(humidity)
             temperature_smoothed.add(temperature)
 
+            # meta information
             metrics['epoch'] = time.time()              # time the message was sent
             metrics['timestamp'] = time.ctime()
             metrics['elevation_m'] = 0
+            metrics['window_len'] = window_len
+            metrics['poll_secs'] = poll_secs
 
+            # raw data
             metrics['temp_c'] = temperature               # sensor height above sea-level
             metrics['humidity'] = humidity
             metrics['pressure_abs'] = pressure     # absolute i.e. not sea level
             metrics['pressure_sea'] = -10          # not yet supported
 
+            # derived data
             metrics['temp_c_smoothed'] = temperature_smoothed.get_moving_average()
             metrics['humidity_smoothed'] = humidity_smoothed.get_moving_average()
             metrics['pressure_abs_smoothed'] = pressure_smoothed.get_moving_average()
