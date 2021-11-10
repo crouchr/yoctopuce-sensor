@@ -1,0 +1,13 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+paho-mqtt = "==1.6.1"
+yoctopuce = "==1.10.45664"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
