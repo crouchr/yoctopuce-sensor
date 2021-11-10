@@ -55,6 +55,7 @@ def main():
             metrics['elevation_m'] = 0
             metrics['window_len'] = window_len
             metrics['poll_secs'] = poll_secs
+            metrics['topic'] = topic
 
             # raw data
             metrics['temp_c'] = temperature               # sensor height above sea-level
