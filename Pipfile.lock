@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9e81fd9a66e14e6c8429f0f6e33f06cc2c655fafa5315564bbc6163afed0c8d7"
+            "sha256": "ab152cf77f6eed52e7758ff8e659166e3924c3f6f39c71a3d073795b8aca7745"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -12,10 +12,31 @@
                 "name": "pypi",
                 "url": "https://pypi.org/simple",
                 "verify_ssl": true
+            },
+            {
+                "name": "ermin",
+                "url": "http://192.168.1.102/python-packages",
+                "verify_ssl": false
             }
         ]
     },
     "default": {
+        "metfuncs": {
+            "hashes": [
+                "sha256:3270a9c13a35f8f705364abdbf77877b012d4dcc42356a50fcd32300e8f8ed42",
+                "sha256:ef002155776687c740096fe5a25602a6572263cefa6afa359c916cff99a9fc14"
+            ],
+            "index": "ermin",
+            "version": "==1.0.29"
+        },
+        "metminifuncs": {
+            "hashes": [
+                "sha256:23b4b5ed6e3838a757e3a29b8431adc27c6984d8b931d53f95537ce93ac76160",
+                "sha256:e27943a434d07c9cfa4d73288dd0df5ba8bf6c70b92277a84f8639800d127cb4"
+            ],
+            "index": "ermin",
+            "version": "==1.0.7"
+        },
         "paho-mqtt": {
             "hashes": [
                 "sha256:2a8291c81623aec00372b5a85558a372c747cbca8e9934dfe218638b8eefc26f"

@@ -22,14 +22,15 @@ def get_window_len():
 
     return window_len
 
+
 # Actual wind vane height to allow for multiplier
-# def get_vane_height_m():
-#     if 'VANE_HEIGHT' in os.environ:
-#         vane_height = os.environ['VANE_HEIGHT']
-#     else:
-#         vane_height = 3.7       # value in Ermin Street
-#
-#     return vane_height
+def get_vane_height_m():
+    if 'VANE_HEIGHT' in os.environ:
+        vane_height = os.environ['VANE_HEIGHT']
+    else:
+        vane_height = 3.7       # value in Ermin Street
+
+    return vane_height
 
 
 # Solar multiplier = theoretical / measured on a cloudless day at noon
@@ -52,23 +53,13 @@ def get_window_len():
 
 
 # elevation in metres
-# def get_site_elevation():
-#     if 'SITE_ELEVATION' in os.environ:
-#         site_elevation = os.environ['SITE_ELEVATION']
-#     else:
-#         site_elevation = 0      # default is sea-level - i.e. running on a boat at sea
-#
-#     return site_elevation
+def get_site_elevation():
+    if 'SITE_ELEVATION' in os.environ:
+        site_elevation = os.environ['SITE_ELEVATION']
+    else:
+        site_elevation = 0      # default is sea-level - i.e. running on a boat at sea
+    return site_elevation
 
-
-# elevation in metres
-# def get_rain_k_factor():
-#     if 'RAIN_K_FACTOR' in os.environ:
-#         rain_k_factor = os.environ['RAIN_K_FACTOR']
-#     else:
-#         rain_k_factor = 0.167
-#
-#     return rain_k_factor
 
 
 # Use j1900 for live
