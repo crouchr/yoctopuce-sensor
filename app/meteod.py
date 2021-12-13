@@ -148,7 +148,7 @@ def main():
 
             # publish payload to MQTT topic
             ret = client1.publish(topic=topic, payload=MQTT_MSG)
-            print(ret.__str__())
+            print('mqtt publish status : ' + ret.__str__())
 
             time.sleep(poll_secs)
 
