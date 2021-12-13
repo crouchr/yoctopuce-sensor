@@ -58,10 +58,10 @@ def main():
             sys.exit('Exiting, unable to register Meteo sensor')
 
         while True:
-            vane_height_m = get_env_app.get_vane_height_m()
+            vane_height_m = float(get_env_app.get_vane_height_m())
             site_elevation_m = float(get_env_app.get_site_elevation())
-            sensor_elevation_m = site_elevation_m + vane_height_m
-            rain_k_factor = get_env_app.get_rain_k_factor()
+            sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
+            rain_k_factor = float(get_env_app.get_rain_k_factor())
 
             print(f'site_elevation_m : {site_elevation_m}')
             print(f'vane_height_m : {vane_height_m}')
