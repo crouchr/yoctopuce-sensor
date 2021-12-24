@@ -1,4 +1,6 @@
 #!/bin/bash
+# Run this on the yoctopi node itself
+
 VERSION=1.0.0
 
 cd ..
