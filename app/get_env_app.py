@@ -71,15 +71,14 @@ def get_site_elevation():
     return site_elevation
 
 
-
 # Use j1900 for live
 def get_mqttd_host():
     """
     Determine the hostname that hosts the MQTT Daemon
     :return:
     """
-    if 'STAGE' in os.environ and os.environ['STAGE'] == 'PRD':
-        mqttd_host = 'mqttd'    # name of 'mqttd' container
+    if 'MQTT_HOST' in os.environ:
+        mqttd_host = os.environ['MQTT_HOST']   # name of 'mqttd' container
     else:
         mqttd_host = 'j1900'    # IP of mqttd
 
