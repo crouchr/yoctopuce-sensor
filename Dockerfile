@@ -1,7 +1,7 @@
 # based on Debian Buster
 FROM python:3.8.5-buster
 LABEL author="Richard Crouch"
-LABEL description="Meteo Daemon"
+LABEL description="Meteod & Yoctopuce Metv2 Daemon"
 
 # generate logs in unbuffered mode
 ENV PYTHONUNBUFFERED=1
