@@ -9,6 +9,7 @@ import traceback
 import random
 import paho.mqtt.client as paho
 from pprint import pprint
+import platform
 
 import get_env
 import get_env_app
@@ -34,6 +35,7 @@ def main():
         topic = get_env_app.get_mqttd_topic()
         poll_secs = get_env_app.get_poll_secs()
         window_len = get_env_app.get_window_len()
+        my_node_name = platform.node()
 
         if stage == 'DEV':
             emulate = True
@@ -56,7 +58,6 @@ def main():
 
         client_id = f'meteod-{random.randint(0, 100)}'
         client1 = paho.Client(client_id)  # create client object
-
 
         # client1.on_publish = on_publish                          #assign function to callback
         client1.connect(broker, port)
@@ -130,6 +131,7 @@ def main():
 
             # meta information
             metrics['epoch'] = time.time()              # time the message was sent
+            metrics['publisher'] = my_node_name
             metrics['timestamp'] = time.ctime()
             metrics['window_len'] = window_len
             metrics['poll_secs'] = poll_secs
