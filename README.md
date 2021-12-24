@@ -13,3 +13,5 @@ temp, pressure, humidity sensor and sending to MQTT topic for downstream process
 TODO
 ----
 - Add the crhuda values - and smoothed versions of
+
+- run as a service on PI https://www.dexterindustries.com/howto/run-a-program-on-your-raspberry-pi-at-startup/

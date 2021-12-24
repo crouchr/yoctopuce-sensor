@@ -7,7 +7,7 @@ from yoctopuce.yocto_pressure import *
 
 # Must be root to register the sensor
 # SerialNumber: METEOMK2-18FD45
-def register_meteo2_sensor(target='any'):
+def register_meteo2_sensor(target='any', emulate=False):
     """
 
     :param target:
@@ -17,6 +17,12 @@ def register_meteo2_sensor(target='any'):
         print('entered register_meteo2_sensor()')
 
         errmsg = YRefParam()
+        if emulate:
+            hum_sensor = 'Yoctopuce (emulated)'
+            press_sensor = 'Yoctopuce (emulated)'
+            temp_sensor = 'Yoctopuce (emulated)'
+            msg = 'Meteo sensor registered OK'
+            return hum_sensor, press_sensor, temp_sensor, msg
 
         # Setup the API to use local USB devices
         if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
@@ -56,7 +62,7 @@ def register_meteo2_sensor(target='any'):
         return None, None, None, e.__str__()
 
 
-def get_meteo_values(hum_sensor, press_sensor, temperature_sensor):
+def get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=False):
     """
 
     :param hum_sensor:
@@ -64,6 +70,11 @@ def get_meteo_values(hum_sensor, press_sensor, temperature_sensor):
     :param temperature_sensor:
     :return:
     """
+    if emulate:
+        humidity = 80.0
+        pressure = 990.0
+        temperature = 25.0
+        return humidity, pressure, temperature
 
     if hum_sensor.isOnline():
         humidity = hum_sensor.get_currentValue()
@@ -79,7 +90,8 @@ def get_meteo_values(hum_sensor, press_sensor, temperature_sensor):
 
 # Simple test loop
 if __name__ == '__main__':
-    hum_sensor, press_sensor, temperature_sensor, status_msg = register_meteo2_sensor()
+    emulate = True
+    hum_sensor, press_sensor, temperature_sensor, status_msg = register_meteo2_sensor(emulate=emulate)
     print(status_msg)
 
     if status_msg != 'Meteo sensor registered OK':
@@ -87,7 +99,7 @@ if __name__ == '__main__':
 
     while True:
         print('---')
-        humidity, pressure, temperature = get_meteo_values(hum_sensor, press_sensor, temperature_sensor)
+        humidity, pressure, temperature = get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=emulate)
         print('humidity=' + humidity.__str__())
         print('pressure=' + pressure.__str__())
         print('temperature=' + temperature.__str__())
