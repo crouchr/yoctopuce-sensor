@@ -69,6 +69,7 @@ def main():
 
         if status_msg != 'Meteo sensor registered OK':
             sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
+        msg_num=0
 
         while True:
             vane_height_m = float(get_env_app.get_vane_height_m())
@@ -80,6 +81,10 @@ def main():
             print(f'vane_height_m : {vane_height_m}')
             print(f'sensor_elevation_m : {sensor_elevation_m}') # sensor elevation
             print(f'rain_k_factor : {rain_k_factor}')
+
+            msg_num = msg_num + 1
+            if msg_num > 99999:
+                msg_num=0
 
             # Read raw data from sensors
             humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=emulate)
@@ -132,6 +137,7 @@ def main():
             # meta information
             metrics['epoch'] = time.time()              # time the message was sent
             metrics['publisher'] = my_node_name
+            metrics['msg_num'] = msg_num
             metrics['timestamp'] = time.ctime()
             metrics['window_len'] = window_len
             metrics['poll_secs'] = poll_secs
