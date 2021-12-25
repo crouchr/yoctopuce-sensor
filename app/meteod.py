@@ -25,6 +25,9 @@ import snow_probability
 # artifacts (metminifuncs)
 # import moving_averages
 
+def on_log(client, userdata, level, buf):
+    print("log => ", buf)
+
 
 def main():
     try:
@@ -56,10 +59,12 @@ def main():
         print(f'window_len : {window_len}')
         print(f'stage : {stage}')
 
-        client_id = f'meteod-{random.randint(0, 100)}'
+        client_id = 'meteod-' + str(random.randint(0, 100))
         client1 = paho.Client(client_id)  # create client object
+        client1.on_log = on_log
 
         # client1.on_publish = on_publish                          #assign function to callback
+
         client1.connect(broker, port)
         s2_avg_last = 0
 
