@@ -95,7 +95,7 @@ def main():
             humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=emulate)
 
             # Calculate derived data
-            sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
+            sea_level_pressure = round(pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature), 1)
             dew_point_c = round(dew_point.calc_dew_point(temperature, humidity), 1)
             # wet_bulb_c = wet_bulb.get_wet_bulb(temperature, pressure, dew_point_c)
             cloud_base_ft = cloud_base.calc_cloud_base_ft(temperature, dew_point_c)

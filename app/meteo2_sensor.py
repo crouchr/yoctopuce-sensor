@@ -77,9 +77,9 @@ def get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=False
         return humidity, pressure, temperature
 
     if hum_sensor.isOnline():
-        humidity = hum_sensor.get_currentValue()
-        pressure = press_sensor.get_currentValue()
-        temperature = temperature_sensor.get_currentValue()
+        humidity = round(hum_sensor.get_currentValue(), 1)
+        pressure = round(press_sensor.get_currentValue(), 1)
+        temperature = round(temperature_sensor.get_currentValue(), 1)
     else:
         humidity = None
         pressure = None
