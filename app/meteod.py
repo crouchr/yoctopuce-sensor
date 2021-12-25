@@ -144,18 +144,20 @@ def main():
             metrics['publisher'] = my_node_name
             metrics['msg_num'] = msg_num
             metrics['timestamp'] = time.ctime()
+            metrics['topic'] = topic
+
+            # environment information
             metrics['window_len'] = window_len
             metrics['poll_secs'] = poll_secs
-            metrics['topic'] = topic
             metrics['sensor_elevation_m'] = sensor_elevation_m
             metrics['rain_k_factor'] = rain_k_factor
 
-            # raw data
+            # raw metrics
             metrics['temp_c'] = temperature                 # sensor height above sea-level
             metrics['humidity'] = humidity
             metrics['pressure_abs'] = pressure              # absolute i.e. not sea level
 
-            # derived data
+            # derived metrics
             metrics['pressure_sea'] = sea_level_pressure    #
             metrics['dew_point'] = dew_point_c
             metrics['frost_point'] = frost_point_c
