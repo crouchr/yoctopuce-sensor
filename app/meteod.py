@@ -25,6 +25,15 @@ import snow_probability
 # artifacts (metminifuncs)
 # import moving_averages
 
+
+def connect_mqtt(broker_ip, port):
+    client_id = 'meteod-' + str(random.randint(0, 100))
+    client = paho.Client(client_id)  # create client object
+    client.on_log = on_log
+    client.connect(broker_ip, port)
+    return client
+
+
 def on_log(client, userdata, level, buf):
     print("log => ", buf)
 
@@ -33,7 +42,7 @@ def main():
     try:
         metrics = {}
         stage = get_env.get_stage()
-        broker = get_env_app.get_mqttd_host()
+        broker_ip = get_env_app.get_mqttd_host()
         port = get_env_app.get_mqttd_port()
         topic = get_env_app.get_mqttd_topic()
         poll_secs = get_env_app.get_poll_secs()
@@ -52,20 +61,20 @@ def main():
         # s1_m_avg = moving_averages.MovingAverage(window_len)
         # s2_m_avg = moving_averages.MovingAverage(window_len)
 
-        print('MQTT broker IP : ' + broker)
+        print('MQTT broker IP : ' + broker_ip)
         print(f'MQTT broker port : {port}')
         print('MQTT topic : ' + topic)
         print(f'poll_secs : {poll_secs}')
         print(f'window_len : {window_len}')
         print(f'stage : {stage}')
 
-        client_id = 'meteod-' + str(random.randint(0, 100))
-        client1 = paho.Client(client_id)  # create client object
-        client1.on_log = on_log
+        client = connect_mqtt(broker_ip, port)
 
-        # client1.on_publish = on_publish                          #assign function to callback
+        # client_id = 'meteod-' + str(random.randint(0, 100))
+        # client1 = paho.Client(client_id)  # create client object
+        # client1.on_log = on_log
+        # client1.connect(broker, port)
 
-        client1.connect(broker, port)
         s2_avg_last = 0
 
         # Get the raw data from the Met sensor
@@ -184,8 +193,18 @@ def main():
             pprint(metrics)
 
             # publish payload to MQTT topic
-            ret = client1.publish(topic=topic, payload=MQTT_MSG)
-            print('mqtt publish status : ' + ret.__str__())
+            ret = client.publish(topic=topic, payload=MQTT_MSG)
+            publish_status = ret[0]
+            msg_num = ret[1]
+            print('mqtt publish status : ' + publish_status.__str__())
+            print('mqtt msg_num : ' + msg_num.__str__())
+
+            # Try a single retry : FIXME : make this exponential backoff
+            if publish_status != 0:
+                print('publish failed, waiting to re-connect...')
+                time.sleep(30)
+                client = connect_mqtt(broker_ip, port)
+                client.publish(topic=topic, payload=MQTT_MSG)
 
             time.sleep(poll_secs)
 
