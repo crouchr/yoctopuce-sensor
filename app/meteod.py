@@ -194,11 +194,10 @@ def main():
                 pprint(metrics)
 
                 # publish payload to MQTT topic
-                # topic = ''
-                ret = client.publish(topic=topic, payload=MQTT_MSG)
+                ret = client.publish(topic=topic, payload=MQTT_MSG, qos=2)
                 publish_status = ret[0]
                 msg_num = ret[1]
-                print('mqtt publish status : ' + publish_status.__str__())
+                print('mqtt publish_status : ' + publish_status.__str__())
                 print('mqtt msg_num : ' + msg_num.__str__())
 
                 # Try a single retry : FIXME : make this exponential backoff
@@ -209,7 +208,7 @@ def main():
                     print(f'publish failed, publish_status={publish_status}, waiting {backoff} secs to re-connect...')
                     time.sleep(backoff)
                     client = connect_mqtt(broker_ip, port)
-                    client.publish(topic=topic, payload=MQTT_MSG)
+                    client.publish(topic=topic, payload=MQTT_MSG, qos=2)
 
                 time.sleep(poll_secs)
 
@@ -223,8 +222,9 @@ def main():
                 continue
 
     except Exception as e:
-        print(f'fatal exception={e}')
+        print(f'fatal exception={e}, aborting...')
         traceback.print_exc()
+        sys.exit(-1)
 
 
 if __name__ == '__main__':
