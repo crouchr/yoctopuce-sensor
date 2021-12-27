@@ -194,7 +194,7 @@ def main():
                 pprint(metrics)
 
                 # publish payload to MQTT topic
-                ret = client.publish(topic=topic, payload=MQTT_MSG, qos=2)
+                ret = client.publish(topic=topic, payload=MQTT_MSG, qos=1)
                 publish_status = ret[0]
                 msg_num = ret[1]
                 print('mqtt publish_status : ' + publish_status.__str__())
@@ -208,7 +208,7 @@ def main():
                     print(f'publish failed, publish_status={publish_status}, waiting {backoff} secs to re-connect...')
                     time.sleep(backoff)
                     client = connect_mqtt(broker_ip, port)
-                    client.publish(topic=topic, payload=MQTT_MSG, qos=2)
+                    client.publish(topic=topic, payload=MQTT_MSG, qos=1)
 
                 time.sleep(poll_secs)
 
