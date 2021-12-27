@@ -25,22 +25,36 @@ import snow_probability
 # artifacts (metminifuncs)
 # import moving_averages
 
+client_id = 'meteod-' + str(random.randint(0, 1000))
+print(f'client_id : {client_id}')
+
 
 def connect_mqtt(broker_ip, port):
-    client_id = 'meteod-' + str(random.randint(0, 100))
+
     client = paho.Client(client_id)  # create client object
     client.on_log = on_log
+    client.on_disconnect = on_disconnect
     client.connect(broker_ip, port)
     return client
 
 
+def on_connect(client, userdata, flags, rc):
+    print(time.ctime() + f' CONNACK received with code {rc}')
+
+
+def on_disconnect(client, userdata, rc):
+    print(time.ctime() + " client disconnected ok")
+
+
 def on_log(client, userdata, level, buf):
-    print("log => ", buf)
+    print(time.ctime() + " log => ", buf)
 
 
 def main():
     try:
         metrics = {}
+        msg_num = 0
+
         stage = get_env.get_stage()
         broker_ip = get_env_app.get_mqttd_host()
         port = get_env_app.get_mqttd_port()
@@ -83,7 +97,7 @@ def main():
 
         if status_msg != 'Meteo sensor registered OK':
             sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
-        msg_num=0
+
 
         while True:
             try:
@@ -216,7 +230,7 @@ def main():
                 backoff = 30
                 print(f'exception={e}')
                 traceback.print_exc()
-                print(f'exception {e}, waiting {backoff} secs to re-connect...')
+                print(f'waiting {backoff} secs to re-connect...')
                 time.sleep(backoff)
                 client = connect_mqtt(broker_ip, port)
                 continue
