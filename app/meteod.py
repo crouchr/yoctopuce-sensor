@@ -208,7 +208,8 @@ def main():
                 # metrics['crhuda_s2_delta'] = s2_delta
 
                 metrics['crhuda_s1'] = s1
-                metrics['crhuda_s2'] = s2
+                metrics['crhuda_s2_tuned'] = s2
+                metrics['crhuda_s2_raw'] = s2_raw
 
                 MQTT_MSG = json.dumps(metrics)
                 pprint(metrics)
