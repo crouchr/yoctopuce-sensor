@@ -33,21 +33,26 @@ def connect_mqtt(broker_ip, port):
 
     client = paho.Client(client_id)  # create client object
     client.on_log = on_log
+    client.on_publish = on_publish
     client.on_disconnect = on_disconnect
     client.connect(broker_ip, port)
     return client
 
 
 def on_connect(client, userdata, flags, rc):
-    print(time.ctime() + f' CONNACK received with code {rc}')
+    print(time.ctime() + f' on_connect() : CONNACK received with code {rc}')
+
+
+def on_publish(client, userdata, mid):
+    print(time.ctime() + f" on_publish() : mid {mid}")
 
 
 def on_disconnect(client, userdata, rc):
-    print(time.ctime() + " client disconnected ok")
+    print(time.ctime() + " on_disconnect() : client disconnected ok")
 
 
 def on_log(client, userdata, level, buf):
-    print(time.ctime() + " log => ", buf)
+    print(time.ctime() + " on_log() => ", buf)
 
 
 def main():
@@ -83,6 +88,7 @@ def main():
         print(f'stage : {stage}')
 
         client = connect_mqtt(broker_ip, port)
+        client.loop_start()
 
         # client_id = 'meteod-' + str(random.randint(0, 100))
         # client1 = paho.Client(client_id)  # create client object
