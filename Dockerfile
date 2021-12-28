@@ -18,10 +18,13 @@ COPY Pipfile* ./
 RUN pipenv install --system --deploy
 
 # Copy application and files
-RUN mkdir /app/cdll
+RUN mkdir /app
 COPY app/*.py /app/
-COPY app/cdll/*.so /app/cdll/
-#COPY yoctopucelibs/*.py /app/
+
+# Copy Rasp Pi drivers
+RUN mkdir /app/cdll
+COPY app/cdll/libyapi-armhf.so /app/cdll/libyapi-armhf.so
+
 WORKDIR /app
 
 # run Python unbuffered so the logs are flushed
