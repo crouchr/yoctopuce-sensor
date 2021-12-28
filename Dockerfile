@@ -18,9 +18,9 @@ COPY Pipfile* ./
 RUN pipenv install --system --deploy
 
 # Copy application and files
-RUN mkdir /app
-#COPY app/*.py /app/
-COPY app/* /app/
+RUN mkdir /app/cdll
+COPY app/*.py /app/
+COPY app/cdll/*.so /app/cdll/
 #COPY yoctopucelibs/*.py /app/
 WORKDIR /app
 
