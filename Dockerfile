@@ -20,6 +20,7 @@ RUN pipenv install --system --deploy
 # Copy application and files
 RUN mkdir /app
 COPY app/*.py /app/
+COPY yoctopucelibs/*.py /app/
 WORKDIR /app
 
 # run Python unbuffered so the logs are flushed
