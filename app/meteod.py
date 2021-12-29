@@ -109,13 +109,13 @@ def main():
                 vane_height_m = float(get_env_app.get_vane_height_m())
                 site_elevation_m = float(get_env_app.get_site_elevation())
                 sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
-                # rain_k_factor = float(get_env_app.get_rain_k_factor())
+                rain_k_factor = float(get_env_app.get_rain_k_factor())
                 crhuda_s2_offset = get_env_app.get_crhuda_s2_offset()
 
                 print(f'site_elevation_m : {site_elevation_m}')
                 print(f'vane_height_m : {vane_height_m}')
                 print(f'sensor_elevation_m : {sensor_elevation_m}') # sensor elevation
-                # print(f'rain_k_factor : {rain_k_factor}')
+                print(f'rain_k_factor : {rain_k_factor}')
                 print(f'crhuda_s2_offset : {crhuda_s2_offset}')
 
                 msg_num = msg_num + 1
@@ -139,10 +139,11 @@ def main():
                     crhuda_dew = 1.0
                 else:
                     crhuda_dew = dew_point_c
-                s1 = humidity
+
+                # rain_k_factor : the paper mentions scaling humidity
+                s1 = round(humidity * rain_k_factor, 1)
                 s2_raw = round(pressure / crhuda_dew, 1)
 
-                # s2 = round(rain_k_factor * (pressure / crhuda_dew), 1)
                 s2 = s2_raw + crhuda_s2_offset
 
                 #
@@ -184,7 +185,7 @@ def main():
                 metrics['window_len'] = window_len
                 metrics['poll_secs'] = poll_secs
                 metrics['sensor_elevation_m'] = sensor_elevation_m
-                # metrics['rain_k_factor'] = rain_k_factor
+                metrics['rain_k_factor'] = rain_k_factor
 
                 # raw metrics
                 metrics['temp_c'] = temperature                 # sensor height above sea-level
