@@ -11,6 +11,9 @@ from yoctopuce.yocto_pressure import *
 
 # Must be root to register the sensor
 # SerialNumber: METEOMK2-18FD45
+# meteod    | Humidity(METEOMK2-18FD45.humidity)=METEOMK2-18FD45.humidity
+# meteod    | Pressure(METEOMK2-18FD45.pressure)=METEOMK2-18FD45.pressure
+# meteod    | Temperature(METEOMK2-18FD45.temperature)=METEOMK2-18FD45.temperature
 def register_meteo2_sensor(target='any', emulate=False):
     """
 
