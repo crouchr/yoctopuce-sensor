@@ -9,7 +9,7 @@ name = "pypi"
 
 [packages]
 paho-mqtt = "==1.6.1"
-#yoctopuce = "==1.10.45664"
+yoctopuce = "==1.10.45664"
 #metfuncs = {version="1.0.29", index="ermin"}
 #metminifuncs = {version="1.0.7", index="ermin"}
 #metpy = "==1.0"
