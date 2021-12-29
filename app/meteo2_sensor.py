@@ -1,12 +1,12 @@
 # See https://www.yoctopuce.com/EN/products/yocto-meteo-v2/doc/METEOMK2.usermanual.html#CHAP5SEC1
 
-# from yoctopuce.yocto_humidity import *
-# from yoctopuce.yocto_temperature import *
-# from yoctopuce.yocto_pressure import *
+from yoctopuce.yocto_humidity import *
+from yoctopuce.yocto_temperature import *
+from yoctopuce.yocto_pressure import *
 
-from yocto_humidity import *
-from yocto_temperature import *
-from yocto_pressure import *
+# from yocto_humidity import *
+# from yocto_temperature import *
+# from yocto_pressure import *
 
 
 # Must be root to register the sensor
@@ -95,6 +95,7 @@ def get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=False
 # Simple test loop
 if __name__ == '__main__':
     emulate = True
+
     hum_sensor, press_sensor, temperature_sensor, status_msg = register_meteo2_sensor(emulate=emulate)
     print(status_msg)
 

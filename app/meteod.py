@@ -44,7 +44,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_publish(client, userdata, mid):
-    print(time.ctime() + f" on_publish() : mid {mid}")
+    print(time.ctime() + f" on_publish() : Mid {mid}")
 
 
 def on_disconnect(client, userdata, rc):
@@ -95,7 +95,7 @@ def main():
         # client1.on_log = on_log
         # client1.connect(broker, port)
 
-        s2_avg_last = 0
+        s2_last = 0
 
         # Get the raw data from the Met sensor
         hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor(emulate=emulate)
@@ -104,18 +104,19 @@ def main():
         if status_msg != 'Meteo sensor registered OK':
             sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
 
-
         while True:
             try:
                 vane_height_m = float(get_env_app.get_vane_height_m())
                 site_elevation_m = float(get_env_app.get_site_elevation())
                 sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
-                rain_k_factor = float(get_env_app.get_rain_k_factor())
+                # rain_k_factor = float(get_env_app.get_rain_k_factor())
+                crhuda_s2_offset = get_env_app.get_crhuda_s2_offset()
 
                 print(f'site_elevation_m : {site_elevation_m}')
                 print(f'vane_height_m : {vane_height_m}')
                 print(f'sensor_elevation_m : {sensor_elevation_m}') # sensor elevation
-                print(f'rain_k_factor : {rain_k_factor}')
+                # print(f'rain_k_factor : {rain_k_factor}')
+                print(f'crhuda_s2_offset : {crhuda_s2_offset}')
 
                 msg_num = msg_num + 1
                 if msg_num > 99999:
@@ -140,7 +141,10 @@ def main():
                     crhuda_dew = dew_point_c
                 s1 = humidity
                 s2_raw = round(pressure / crhuda_dew, 1)
-                s2 = round(rain_k_factor * (pressure / crhuda_dew), 1)
+
+                # s2 = round(rain_k_factor * (pressure / crhuda_dew), 1)
+                s2 = s2_raw + crhuda_s2_offset
+
                 #
                 if s2 > 150.0:
                     s2 = 150.0
@@ -152,8 +156,8 @@ def main():
                 # s2_avg = s2_m_avg.get_moving_average()
 
                 # s2 slope -
-                # s2_delta = s2_avg - s2_avg_last
-                # s2_avg_last = s2_avg
+                s2_delta = s2 - s2_last
+                s2_last = s2
 
                 # add this metric in here once good values have been determined in a downstream daemon
                 # in phase waiting for S2 to increase and cross S1
@@ -180,7 +184,7 @@ def main():
                 metrics['window_len'] = window_len
                 metrics['poll_secs'] = poll_secs
                 metrics['sensor_elevation_m'] = sensor_elevation_m
-                metrics['rain_k_factor'] = rain_k_factor
+                # metrics['rain_k_factor'] = rain_k_factor
 
                 # raw metrics
                 metrics['temp_c'] = temperature                 # sensor height above sea-level
@@ -210,6 +214,8 @@ def main():
                 metrics['crhuda_s1'] = s1
                 metrics['crhuda_s2_tuned'] = s2
                 metrics['crhuda_s2_raw'] = s2_raw
+                metrics['crhuda_s2_offset'] = crhuda_s2_offset
+                metrics['crhuda_s2_delta'] = s2_delta
 
                 MQTT_MSG = json.dumps(metrics)
                 pprint(metrics)
@@ -218,13 +224,11 @@ def main():
                 ret = client.publish(topic=topic, payload=MQTT_MSG, qos=1)
                 publish_status = ret[0]
                 msg_num = ret[1]
-                print('mqtt publish_status : ' + publish_status.__str__())
-                print('mqtt msg_num : ' + msg_num.__str__())
+                # print('mqtt publish_status : ' + publish_status.__str__())
+                # print('mqtt msg_num : ' + msg_num.__str__())
 
                 # Try a single retry : FIXME : make this exponential backoff
-                if publish_status == 0:
-                    print('mqtt publish OK')
-                else:
+                if publish_status != 0:
                     backoff = 30
                     print(f'publish failed, publish_status={publish_status}, waiting {backoff} secs to re-connect...')
                     time.sleep(backoff)
