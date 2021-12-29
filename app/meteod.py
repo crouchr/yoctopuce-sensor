@@ -109,7 +109,7 @@ def main():
                 vane_height_m = float(get_env_app.get_vane_height_m())
                 site_elevation_m = float(get_env_app.get_site_elevation())
                 sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
-                crhuda_s1_coeff = float(get_env_app.get_crhuda_s1_coeff)
+                crhuda_s1_coeff = float(get_env_app.get_crhuda_s1_coeff())
                 crhuda_s2_offset = get_env_app.get_crhuda_s2_offset()
 
                 print(f'site_elevation_m : {site_elevation_m}')
