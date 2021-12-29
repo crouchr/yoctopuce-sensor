@@ -140,8 +140,9 @@ def main():
                 else:
                     crhuda_dew = dew_point_c
 
-                # rain_k_factor : the paper mentions scaling humidity
-                s1 = round(humidity * crhuda_s1_coeff, 1)
+                # s1_coeff : the paper mentions scaling humidity
+                s1_raw = humidity
+                s1_tuned = round(humidity * crhuda_s1_coeff, 1)
                 s2_raw = round(pressure / crhuda_dew, 1)
 
                 s2 = s2_raw + crhuda_s2_offset
@@ -213,7 +214,8 @@ def main():
                 # metrics['crhuda_s2'] = s2_avg
                 # metrics['crhuda_s2_delta'] = s2_delta
 
-                metrics['crhuda_s1'] = s1
+                metrics['crhuda_s1_raw'] = s1_raw
+                metrics['crhuda_s1_tuned'] = s1_tuned
                 metrics['crhuda_s2_raw'] = s2_raw
                 metrics['crhuda_s2_tuned'] = s2
                 metrics['crhuda_s2_delta'] = s2_delta
