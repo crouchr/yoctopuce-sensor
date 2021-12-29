@@ -44,7 +44,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_publish(client, userdata, mid):
-    print(time.ctime() + f" on_publish() : Mid {mid}")
+    print(time.ctime() + f" on_publish() : Mid: {mid}")
 
 
 def on_disconnect(client, userdata, rc):
