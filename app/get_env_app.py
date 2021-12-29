@@ -66,13 +66,13 @@ def get_vane_height_m():
 
 
 # fudge factor used by CRHUDA rain prediction algorithm
-def get_rain_k_factor():
-    if 'RAIN_K_FACTOR' in os.environ:
-        rain_k_factor = os.environ['RAIN_K_FACTOR']
+def get_crhuda_s1_coeff():
+    if 'CRHUDA_S1_COEFF' in os.environ:
+        crhuda_s1_coeff = os.environ['CRHUDA_S1_COEFF']
     else:
-        rain_k_factor = 1.0
+        crhuda_s1_coeff = 1.0
 
-    return rain_k_factor
+    return crhuda_s1_coeff
 
 
 # elevation in metres
