@@ -28,4 +28,5 @@ COPY app/cdll/libyapi-armhf.so /app/cdll/libyapi-armhf.so
 WORKDIR /app
 
 # run Python unbuffered so the logs are flushed
-CMD ["python3", "-u", "meteod.py"]
+#CMD ["python3", "-u", "meteod.py"]
+CMD ["tail", "-f", "/dev/null"]
