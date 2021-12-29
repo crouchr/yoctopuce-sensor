@@ -156,7 +156,7 @@ def main():
                 # s2_avg = s2_m_avg.get_moving_average()
 
                 # s2 slope -
-                s2_delta = s2 - s2_last
+                s2_delta = round(s2 - s2_last, 1)
                 s2_last = s2
 
                 # add this metric in here once good values have been determined in a downstream daemon
