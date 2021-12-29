@@ -29,9 +29,9 @@ def get_crhuda_s2_offset():
     :return:
     """
     if 'CRHUDA_S2_OFFSET' in os.environ:
-        crhuda_s2_offset = int(os.environ['CRHUDA_S2_OFFSET'])
+        crhuda_s2_offset = os.environ['CRHUDA_S2_OFFSET']
     else:
-        crhuda_s2_offset = 0
+        crhuda_s2_offset = 0.0
 
     return float(crhuda_s2_offset)
 
