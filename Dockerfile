@@ -28,5 +28,5 @@ COPY app/*.py /app/
 WORKDIR /app
 
 # run Python unbuffered so the logs are flushed
-#CMD ["tail", "-f", "/dev/null"]
-CMD ["python3", "-u", "meteod.py"]
+CMD ["tail", "-f", "/dev/null"]
+#CMD ["python3", "-u", "meteod.py"]
