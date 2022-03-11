@@ -1025,6 +1025,8 @@ class YAPI:
             #  LINUX (INTEL + ARM)
             #
             elif platform.system() == 'Linux':
+                print(f'machine={machine}') # added by RCH
+                print(f'libpath={libpath}') # added by RCH
                 if machine.find("aarch64") >= 0:
                     YAPI._yApiCLibFile = libpath + "/cdll/libyapi-aarch64.so"
                     YAPI._yApiCLibFileFallback = libpath + "/cdll/libyapi-aarch64.so"

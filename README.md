@@ -19,3 +19,5 @@ TODO
 RASP PI
 =======
 This has the drivers copied across - i.e. not imported
+
+https://linuxhint.com/about-arm64-armel-armhf/
