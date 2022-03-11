@@ -1,13 +1,12 @@
 # See https://www.yoctopuce.com/EN/products/yocto-meteo-v2/doc/METEOMK2.usermanual.html#CHAP5SEC1
 
-from yoctopuce.yocto_humidity import *
-from yoctopuce.yocto_temperature import *
-from yoctopuce.yocto_pressure import *
+# from yoctopuce.yocto_humidity import *
+# from yoctopuce.yocto_temperature import *
+# from yoctopuce.yocto_pressure import *
 
-# from yocto_humidity import *
-# from yocto_temperature import *
-# from yocto_pressure import *
-
+from yocto_humidity import *
+from yocto_temperature import *
+from yocto_pressure import *
 
 # Must be root to register the sensor
 # SerialNumber: METEOMK2-18FD45
