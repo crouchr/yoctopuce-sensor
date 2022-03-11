@@ -1,9 +1,11 @@
 # See https://www.yoctopuce.com/EN/products/yocto-meteo-v2/doc/METEOMK2.usermanual.html#CHAP5SEC1
 
+# if x86
 # from yoctopuce.yocto_humidity import *
 # from yoctopuce.yocto_temperature import *
 # from yoctopuce.yocto_pressure import *
 
+# if ARM
 from yocto_humidity import *
 from yocto_temperature import *
 from yocto_pressure import *
