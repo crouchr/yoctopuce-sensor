@@ -1031,7 +1031,7 @@ class YAPI:
                     YAPI._yApiCLibFile = libpath + "/cdll/libyapi-aarch64.so"
                     YAPI._yApiCLibFileFallback = libpath + "/cdll/libyapi-aarch64.so"
                 # elif machine.find("arm") >= 0:
-                elif machine == 'armv6':
+                elif machine == 'armv6l':
                     YAPI._yApiCLibFile = libpath + "/cdll/libyapi-armhf.so"
                     YAPI._yApiCLibFileFallback = libpath + "/cdll/libyapi-armel.so"
                     print(f'YAPI._yApiCLibFile={YAPI._yApiCLibFile}')
