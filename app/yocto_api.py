@@ -1030,9 +1030,12 @@ class YAPI:
                 if machine.find("aarch64") >= 0:
                     YAPI._yApiCLibFile = libpath + "/cdll/libyapi-aarch64.so"
                     YAPI._yApiCLibFileFallback = libpath + "/cdll/libyapi-aarch64.so"
-                elif machine.find("arm") >= 0:
+                # elif machine.find("arm") >= 0:
+                elif machine == 'armv6':
                     YAPI._yApiCLibFile = libpath + "/cdll/libyapi-armhf.so"
                     YAPI._yApiCLibFileFallback = libpath + "/cdll/libyapi-armel.so"
+                    print(f'YAPI._yApiCLibFile={YAPI._yApiCLibFile}')
+                    print(f'YAPI._yApiCLibFileFallback={YAPI._yApiCLibFileFallback}')
                 elif machine.find("mips") >= 0:
                     byteorder_str = sys.byteorder
                     if byteorder_str.lower() == 'little':

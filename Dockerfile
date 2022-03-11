@@ -22,8 +22,8 @@ RUN mkdir /app
 COPY app/*.py /app/
 
 # Copy Rasp Pi drivers
-#RUN mkdir /app/cdll
-#COPY app/cdll/libyapi-armhf.so /app/cdll/libyapi-armhf.so
+RUN mkdir /app/cdll
+COPY app/cdll/libyapi-armhf.so /app/cdll/libyapi-armhf.so
 
 WORKDIR /app
 
