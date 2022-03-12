@@ -13,9 +13,15 @@ import platform
 
 import get_env
 import get_env_app
-import meteo2_sensor
+
 import dew_point
 import frost_point
+
+# Yoctopuce meteo v2 sensor
+import meteo2_sensor
+
+# Yoctopuce light sensor
+import light_sensor
 
 # The MASTER of these files are in artifacts (metfuncs)
 import mean_sea_level_pressure
@@ -97,12 +103,18 @@ def main():
 
         s2_last = 0
 
-        # Get the raw data from the Met sensor
-        hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor(emulate=emulate)
-        print(status_msg)
+        # Register the Meteo v2  sensor
+        # hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor(emulate=emulate)
+        # print(status_msg)
+        #
+        # if status_msg != 'Meteo sensor registered OK':
+        #     sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
 
-        if status_msg != 'Meteo sensor registered OK':
-            sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
+        # Register the light sensor
+        lux_sensor, status_msg = light_sensor.register_light_sensor()
+        print(status_msg)
+        if status_msg != 'light sensor registered OK':
+            sys.exit('Exiting, unable to register Yoctopuce Light sensor')
 
         while True:
             try:
@@ -124,6 +136,7 @@ def main():
 
                 # Read raw data from sensors
                 humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=emulate)
+                lux = light_sensor.get_lux(lux_sensor)
 
                 # Calculate derived data
                 sea_level_pressure = round(pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature), 1)
@@ -193,6 +206,7 @@ def main():
                 metrics['temp_c'] = temperature                 # sensor height above sea-level
                 metrics['humidity'] = humidity
                 metrics['pressure_abs'] = pressure              # absolute i.e. not sea level
+                metrics['lux'] = lux
 
                 # derived metrics
                 metrics['pressure_sea'] = sea_level_pressure    #

@@ -6,9 +6,11 @@
 # from yoctopuce.yocto_pressure import *
 
 # if ARM
+# meteo v2
 from yocto_humidity import *
 from yocto_temperature import *
 from yocto_pressure import *
+
 
 # Must be root to register the sensor
 # SerialNumber: METEOMK2-18FD45
