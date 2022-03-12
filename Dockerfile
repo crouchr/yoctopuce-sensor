@@ -26,6 +26,7 @@ COPY app/*.py /app/
 #COPY cdll/libyapi-armhf.so /usr/local/lib/python3.8/site-packages/yoctopuce/cdll/libyapi-armhf.so
 RUN mkdir -p /app/cdll
 COPY cdll/libyapi-armhf.so /app/cdll/libyapi-armhf.so
+COPY cdll/libyapi-armel.so /app/cdll/libyapi-armel.so
 
 WORKDIR /app
 
