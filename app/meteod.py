@@ -103,14 +103,14 @@ def main():
 
         s2_last = 0
 
-        # Register the Meteo v2  sensor
-        # hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor(emulate=emulate)
-        # print(status_msg)
+        # Register the Yoctopuce Meteo v2  sensor
+        hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor(emulate=emulate)
+        print(status_msg)
         #
-        # if status_msg != 'Meteo sensor registered OK':
-        #     sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
+        if status_msg != 'Meteo sensor registered OK':
+           sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
 
-        # Register the light sensor
+        # Register the Yoctopuce light sensor
         lux_sensor, status_msg = light_sensor.register_light_sensor()
         print(status_msg)
         if status_msg != 'light sensor registered OK':
