@@ -21,10 +21,10 @@ RUN pipenv install --system --deploy
 RUN mkdir /app
 COPY app/*.py /app/
 
-# Copy Rasp Pi drivers for PI 1B
+# Copy Rasp Pi drivers for PI 1B (libyapi-armel.so)
 # Will need to add others to run it on x86, Pi4 ?
 RUN mkdir -p /app/cdll
-COPY cdll/libyapi-armel.so /app/cdll/libyapi-armel.so       # Pi 1B
+COPY cdll/libyapi-armel.so /app/cdll/libyapi-armel.so
 COPY cdll/libyapi-aarch64.so /app/cdll/libyapi-aarch64.so
 WORKDIR /app
 
