@@ -22,8 +22,10 @@ RUN mkdir /app
 COPY app/*.py /app/
 
 # Copy Rasp Pi drivers
-RUN mkdir -p /usr/local/lib/python3.8/site-packages/yoctopuce/cdll
-COPY cdll/libyapi-armhf.so /usr/local/lib/python3.8/site-packages/yoctopuce/cdll/libyapi-armhf.so
+#RUN mkdir -p /usr/local/lib/python3.8/site-packages/yoctopuce/cdll
+#COPY cdll/libyapi-armhf.so /usr/local/lib/python3.8/site-packages/yoctopuce/cdll/libyapi-armhf.so
+RUN mkdir -p /app/cdll
+COPY cdll/libyapi-armhf.so /app/cdll/libyapi-armhf.so
 
 WORKDIR /app
 
