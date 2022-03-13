@@ -26,17 +26,18 @@ def register_meteo2_sensor(target='any', emulate=False):
     try:
         print('entered register_meteo2_sensor()')
 
-        errmsg = YRefParam()
         if emulate:
-            hum_sensor = 'Yoctopuce (emulated)'
-            press_sensor = 'Yoctopuce (emulated)'
-            temp_sensor = 'Yoctopuce (emulated)'
-            msg = 'Meteo sensor registered OK'
+            hum_sensor = 'Yoctopuce meteo v2 (emulated)'
+            press_sensor = 'Yoctopuce meteo v2 (emulated)'
+            temp_sensor = 'Yoctopuce meteo v2 (emulated)'
+            msg = 'meteo v2 sensor registered OK'
             return hum_sensor, press_sensor, temp_sensor, msg
+
+        errmsg = YRefParam()
 
         # Setup the API to use local USB devices
         if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
-            msg = "Error : Meteo sensor init error : " + errmsg.value
+            msg = "Error : meteo v2 sensor init error : " + errmsg.value
             print(msg)
             return None, None, None, msg
 
@@ -44,7 +45,7 @@ def register_meteo2_sensor(target='any', emulate=False):
             # retrieve any sensor
             sensor = YHumidity.FirstHumidity()
             if sensor is None:
-                msg = 'Error : check Meteo sensor USB cable'
+                msg = 'Error : check meteo v2 sensor USB cable'
                 print(msg)
                 return None, None, None, msg
             m = sensor.get_module()
@@ -55,16 +56,16 @@ def register_meteo2_sensor(target='any', emulate=False):
         press_sensor = YPressure.FindPressure(target + '.pressure')
 
         if not (m.isOnline()):
-            msg = 'Error : Meteo sensor not connected'
+            msg = 'Error : meteo v2 sensor not connected'
             print(msg)
             return None, None, None, msg
 
-        print('Meteo sensor registered OK')
+        print('meteo v2 sensor registered OK')
         print(hum_sensor.__str__())
         print(press_sensor.__str__())
         print(temp_sensor.__str__())
 
-        return hum_sensor, press_sensor, temp_sensor, 'Meteo sensor registered OK'
+        return hum_sensor, press_sensor, temp_sensor, 'meteo v2 sensor registered OK'
 
     except Exception as e:
         print('register_meteo2_sensor() : exception : ' + e.__str__())
@@ -105,7 +106,7 @@ if __name__ == '__main__':
     hum_sensor, press_sensor, temperature_sensor, status_msg = register_meteo2_sensor(emulate=emulate)
     print(status_msg)
 
-    if status_msg != 'Meteo sensor registered OK':
+    if status_msg != 'meteo v2 sensor registered OK':
         sys.exit('Exiting, unable to register Meteo sensor')
 
     while True:

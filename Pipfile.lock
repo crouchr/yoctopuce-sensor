@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7233384253366d90add8740e49824961e26eed0df333206f7d0ee2b4a3c4ab43"
+            "sha256": "c4dc3d30f083c3853b2704171965fd9e09cff0ec0b1af97b220f716073bdc804"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,12 +16,27 @@
         ]
     },
     "default": {
+        "astral": {
+            "hashes": [
+                "sha256:b9ef70faf32e81a8ba174d21e8f29dc0b53b409ef035f27e0749ddc13cb5982a",
+                "sha256:e41d9967d5c48be421346552f0f4dedad43ff39a83574f5ff2ad32b6627b6fbe"
+            ],
+            "index": "pypi",
+            "version": "==2.2"
+        },
         "paho-mqtt": {
             "hashes": [
                 "sha256:2a8291c81623aec00372b5a85558a372c747cbca8e9934dfe218638b8eefc26f"
             ],
             "index": "pypi",
             "version": "==1.6.1"
+        },
+        "pytz": {
+            "hashes": [
+                "sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c",
+                "sha256:acad2d8b20a1af07d4e4c9d2e9285c5ed9104354062f275f3fcd88dcef4f1326"
+            ],
+            "version": "==2021.3"
         }
     },
     "develop": {}

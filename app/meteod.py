@@ -16,12 +16,14 @@ import get_env_app
 
 import dew_point
 import frost_point
+import astral_funcs
 
 # Yoctopuce meteo v2 sensor
 import meteo2_sensor
 
 # Yoctopuce light sensor
 import light_sensor
+import lux_funcs
 
 # The MASTER of these files are in artifacts (metfuncs)
 import mean_sea_level_pressure
@@ -107,14 +109,14 @@ def main():
         hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor(emulate=emulate)
         print(status_msg)
         #
-        if status_msg != 'Meteo sensor registered OK':
-           sys.exit('Exiting, unable to register Yoctopuce Meteo sensor')
+        if status_msg != 'meteo v2 sensor registered OK':
+           sys.exit('Exiting, unable to register Yoctopuce meteo v2 sensor')
 
         # Register the Yoctopuce light sensor
-        lux_sensor, status_msg = light_sensor.register_light_sensor()
+        lux_sensor, status_msg = light_sensor.register_light_sensor(emulate=emulate)
         print(status_msg)
         if status_msg != 'light sensor registered OK':
-            sys.exit('Exiting, unable to register Yoctopuce Light sensor')
+            sys.exit('Exiting, unable to register Yoctopuce light sensor')
 
         while True:
             try:
@@ -136,9 +138,13 @@ def main():
 
                 # Read raw data from sensors
                 humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, emulate=emulate)
-                lux = light_sensor.get_lux(lux_sensor)
+                lux = light_sensor.get_lux(lux_sensor, emulate=emulate)
 
                 # Calculate derived data
+                watts = round(lux_funcs.convert_lux_to_watts(lux), 2)
+                light_conditions = lux_funcs.map_lux_to_sky_condition(lux)
+                moon_days = astral_funcs.get_moon_days()
+
                 sea_level_pressure = round(pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature), 1)
                 dew_point_c = round(dew_point.calc_dew_point(temperature, humidity), 1)
                 # wet_bulb_c = wet_bulb.get_wet_bulb(temperature, pressure, dew_point_c)
@@ -194,6 +200,7 @@ def main():
                 metrics['msg_num'] = msg_num
                 metrics['timestamp'] = time.ctime()
                 metrics['topic'] = topic
+                metrics['emulate'] = emulate
 
                 # environment variables information
                 metrics['window_len'] = window_len
@@ -214,6 +221,9 @@ def main():
                 metrics['frost_point'] = frost_point_c
                 metrics['snow_probability'] = snow_probability_val[2]
                 metrics['cloud_base_ft'] = cloud_base_ft
+                metrics['watts'] = watts
+                metrics['light_conditions'] = light_conditions
+                metrics['moon_days'] = moon_days
 
                 # Needs more work to get to work on Pi
                 # metrics['wet_bulb'] = wet_bulb_c

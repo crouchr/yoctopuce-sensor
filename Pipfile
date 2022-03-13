@@ -13,6 +13,7 @@ paho-mqtt = "==1.6.1"
 #metfuncs = {version="1.0.29", index="ermin"}
 #metminifuncs = {version="1.0.7", index="ermin"}
 #metpy = "==1.0"
+astral = "==2.2"
 
 [dev-packages]
 

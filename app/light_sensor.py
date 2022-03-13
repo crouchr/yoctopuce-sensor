@@ -1,9 +1,15 @@
 
 from yocto_lightsensor import *
 
-def register_light_sensor(target='any'):
+
+def register_light_sensor(target='any', emulate=False):
     try:
         print('entered register_light_sensor()')
+
+        if emulate:
+            lux_sensor = 'Yoctopuce light sensor (emulated)'
+            msg = 'light sensor registered OK'
+            return lux_sensor, msg
 
         errmsg = YRefParam()
 
@@ -34,12 +40,15 @@ def register_light_sensor(target='any'):
         return None
 
 
-def get_lux(sensor):
+def get_lux(sensor, emulate=False):
     """
     Read light level (in Lux) from light sensor
     :param sensor:
     :return:
     """
+    if emulate:
+        lux = 1000.0
+        return lux
 
     if sensor.isOnline():
         lux = sensor.get_currentValue()
