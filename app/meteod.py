@@ -22,6 +22,7 @@ import cloud_base
 import moon_phase
 import solar_funcs
 import solar_rad_expected
+import snow_probability
 
 # artifacts (metminifuncs)
 import moving_averages
@@ -119,6 +120,7 @@ def main():
             altitude = solar_rad_expected.calc_altitude(sensor_latitude, sensor_longitude)
             solar_watts_theoretical = round(solar_rad_expected.get_solar_radiation_theoretical(altitude), 2)
             sky_condition = solar_funcs.map_lux_to_sky_condition(lux)
+            snow_prognosis_text, _, snow_prob_percent = snow_probability.calc_snow_probability(temperature, humidity)
 
             # CRHUDA model https://www.researchgate.net/publication/337236701_Algorithm_to_Predict_the_Rainfall_Starting_Point_as_a_Function_of_Atmospheric_Pressure_Humidity_and_Dewpoint
             # This metric calculation should be moved OUT of cloudmetricsd
@@ -182,6 +184,10 @@ def main():
             metrics['azimuth'] = azimuth
             metrics['altitude'] = altitude
             metrics['solar_watts_theoretical'] = solar_watts_theoretical
+
+            # Snow information
+            metrics['snow_prognosis_text'] = snow_prognosis_text
+            metrics['snow_probability_percent'] = snow_prob_percent
 
             # Meteo sensor reading data
             metrics['temp_c'] = temperature                 # sensor height above sea-level
