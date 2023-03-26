@@ -14,7 +14,7 @@ def register_meteo2_sensor(target='any'):
     :return:
     """
     try:
-        print('entered register_meteo2_sensor()')
+        print('Entered register_meteo2_sensor()')
 
         errmsg = YRefParam()
 
@@ -23,12 +23,20 @@ def register_meteo2_sensor(target='any'):
             msg = "Error : Meteo sensor init error : " + errmsg.value
             print(msg)
             return None, None, None, msg
+        else:
+            print('Meteo sensor registered OK')
+
+        module = YModule.FirstModule()
+        serial_number = module.get_module()
+        product_name = module.get_productName()
+        print("serial_number is " + serial_number.__str__())
+        print("product_name is " + product_name.__str__())
 
         if target == 'any':
             # retrieve any sensor
             sensor = YHumidity.FirstHumidity()
             if sensor is None:
-                msg = 'Error : check Meteo sensor USB cable'
+                msg = 'Error : Check Meteo sensor USB cable'
                 print(msg)
                 return None, None, None, msg
             m = sensor.get_module()
