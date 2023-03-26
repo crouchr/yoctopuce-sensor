@@ -18,7 +18,7 @@ def get_window_len():
     if 'WINDOW_LEN' in os.environ:
         window_len = int(os.environ['WINDOW_LEN'])
     else:
-        window_len = 5
+        window_len = int(15 * 60 / get_poll_secs())    # 15 minutes is the window
 
     return window_len
 
@@ -67,7 +67,8 @@ def get_site_elevation():
     if 'SITE_ELEVATION' in os.environ:
         site_elevation = os.environ['SITE_ELEVATION']
     else:
-        site_elevation = 0      # default is sea-level - i.e. running on a boat at sea
+        # FIXME : the mean_se_level function cannot handle 0 - so fix it and return to default here of 0m
+        site_elevation = 90      # default is sea-level - i.e. running on a boat at sea
     return site_elevation
 
 

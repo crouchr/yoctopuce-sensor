@@ -7,7 +7,7 @@ from yoctopuce.yocto_pressure import *
 
 # Must be root to register the sensor
 # SerialNumber: METEOMK2-18FD45
-def register_meteo2_sensor(target='any'):
+def register_meteo2_sensor(target='any', bypass_sensor=False):
     """
 
     :param target:
@@ -15,6 +15,8 @@ def register_meteo2_sensor(target='any'):
     """
     try:
         print('Entered register_meteo2_sensor()')
+        if bypass_sensor:
+            return None, None, None, 'Emulated that Meteo sensor registered OK'
 
         errmsg = YRefParam()
 
@@ -64,7 +66,7 @@ def register_meteo2_sensor(target='any'):
         return None, None, None, e.__str__()
 
 
-def get_meteo_values(hum_sensor, press_sensor, temperature_sensor):
+def get_meteo_values(hum_sensor, press_sensor, temperature_sensor, bypass_sensor=False):
     """
 
     :param hum_sensor:
@@ -72,6 +74,9 @@ def get_meteo_values(hum_sensor, press_sensor, temperature_sensor):
     :param temperature_sensor:
     :return:
     """
+
+    if bypass_sensor:
+        return 60.0, 990.0, 25.0
 
     if hum_sensor.isOnline():
         humidity = hum_sensor.get_currentValue()
@@ -95,6 +100,7 @@ if __name__ == '__main__':
 
     while True:
         print('---')
+        print(time.ctime())
         humidity, pressure, temperature = get_meteo_values(hum_sensor, press_sensor, temperature_sensor)
         print('humidity=' + humidity.__str__())
         print('pressure=' + pressure.__str__())

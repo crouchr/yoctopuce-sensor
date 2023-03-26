@@ -1,4 +1,3 @@
-
 import sys
 import time
 import json
@@ -11,7 +10,6 @@ from pprint import pprint
 import get_env_app
 import meteo2_sensor
 
-
 # artifacts (metfuncs)
 import mean_sea_level_pressure
 import dew_point
@@ -21,10 +19,11 @@ import cloud_base
 # artifacts (metminifuncs)
 import moving_averages
 
-
 def main():
     try:
         metrics = {}
+
+        bypass_sensor = True    # i.e. during development
 
         broker = get_env_app.get_mqttd_host()
         port = get_env_app.get_mqttd_port()
@@ -69,7 +68,7 @@ def main():
             print(f'rain_k_factor : {rain_k_factor}')
 
             # Read raw data from sensors
-            humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor)
+            humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, bypass_sensor=bypass_sensor)
 
             # Calculate derived data
             sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
