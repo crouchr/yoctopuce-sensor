@@ -14,3 +14,4 @@ todo
 - add three hour pressure trend - like cumulus 'rising quickly' - e.g. met office style
 - add three hour pressure trend - quantitative - e.g. met office style
 - add forecast based on pressure trend
+- theoretical solar charging watts ? - is there a calculation on internet ?

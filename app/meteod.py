@@ -193,8 +193,8 @@ def main():
             metrics['moon_light_percent'] = moon_light_percent
 
             # Sun information
-            metrics['azimuth'] = azimuth
-            metrics['altitude'] = altitude
+            metrics['solar_azimuth'] = azimuth
+            metrics['solar_altitude'] = altitude
             metrics['solar_watts_theoretical'] = solar_watts_theoretical
 
             # Snow information
