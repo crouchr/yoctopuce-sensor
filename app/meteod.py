@@ -7,17 +7,25 @@ import traceback
 import paho.mqtt.client as paho
 from pprint import pprint
 
+import get_env
 import get_env_app
+
+# 2 x Yoctopuce sensors
 import meteo2_sensor
+import light_sensor
 
 # artifacts (metfuncs)
 import mean_sea_level_pressure
 import dew_point
 import wet_bulb
 import cloud_base
+import moon_phase
+import solar_funcs
+import solar_rad_expected
 
 # artifacts (metminifuncs)
 import moving_averages
+
 
 def main():
     try:
@@ -25,12 +33,22 @@ def main():
 
         bypass_sensor = False    # i.e. set to True if no sensor attached during development
 
+        version = get_env.get_version()
         broker = get_env_app.get_mqttd_host()
         port = get_env_app.get_mqttd_port()
         topic = get_env_app.get_mqttd_topic()
         poll_secs = get_env_app.get_poll_secs()
         window_len = get_env_app.get_window_len()
 
+        # Sensor information
+        sensor_name = get_env_app.get_sensor_name()
+        sensor_city = get_env_app.get_sensor_city()
+        sensor_location = get_env_app.get_sensor_location()
+        sensor_postcode = get_env_app.get_sensor_postcode()
+        sensor_latitude = float(get_env_app.get_sensor_latitude())
+        sensor_longitude = float(get_env_app.get_sensor_longitude())
+
+        # smoothed values
         pressure_smoothed = moving_averages.MovingAverage(window_len)
         sea_level_pressure_smoothed = moving_averages.MovingAverage(window_len)
         temperature_smoothed = moving_averages.MovingAverage(window_len)
@@ -50,31 +68,57 @@ def main():
         s2_avg_last = 0
 
         # Get the raw data from the Met sensor
-        hum_sensor, press_sensor, temperature_sensor, status_msg = meteo2_sensor.register_meteo2_sensor()
-        print(status_msg)
+        hum_sensor, press_sensor, temperature_sensor, meteo_status_msg = meteo2_sensor.register_meteo2_sensor()
+        print("meteo sensor : " + meteo_status_msg)
+        lux_sensor, lux_status_msg = light_sensor.register_light_sensor()
+        print("light sensor : " + lux_status_msg)
 
-        if status_msg != 'Meteo sensor registered OK':
-            sys.exit('Exiting, unable to register Meteo sensor')
+        if meteo_status_msg != 'meteo sensor registered OK':
+            sys.exit('Exiting, unable to register Yoctopuce meteo sensor')
+        if lux_status_msg != 'light sensor registered OK':
+            sys.exit('Exiting, unable to register Yoctopuce light sensor')
 
         while True:
             vane_height_m = float(get_env_app.get_vane_height_m())
             site_elevation_m = float(get_env_app.get_site_elevation())
             sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
-            rain_k_factor = float(get_env_app.get_rain_k_factor())
-
+            rain_k_factor = float(get_env_app.get_rain_k_factor())  # can tweak without restarting container
             print(f'site_elevation_m : {site_elevation_m}')
             print(f'vane_height_m : {vane_height_m}')
             print(f'sensor_elevation_m : {sensor_elevation_m}') # sensor elevation
             print(f'rain_k_factor : {rain_k_factor}')
 
-            # Read raw data from sensors
+            # date info
+            utc_epoch = time.time()
+            # local_time = time.ctime(utc_epoch)
+            time_struct = time.gmtime(utc_epoch)  # gm = UTC
+            tm_month = time_struct.tm_mon
+            tm_year = time_struct.tm_year
+            tm_day = time_struct.tm_mday
+            tm_daylight_savings_time = time_struct.tm_isdst
+            tm_zone = time_struct.tm_zone
+
+            # moon-related
+            moon_phase_tuple = moon_phase.moon_phase(tm_month, tm_day, tm_year)
+            moon_phase_description = moon_phase_tuple[1]
+            moon_light_percent = moon_phase_tuple[2]
+
+            # Read raw data from meteo sensor
             humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, bypass_sensor=bypass_sensor)
+
+            # Read raw data from light sensor
+            lux = light_sensor.get_lux(lux_sensor)
 
             # Calculate derived data
             sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
             dew_point_c = dew_point.get_dew_point(temperature, humidity)
             wet_bulb_c = wet_bulb.get_wet_bulb(temperature, pressure, dew_point_c)
             cloud_base_ft = cloud_base.calc_cloud_base_ft(temperature, dew_point_c)
+            solar_watts = round(solar_funcs.convert_lux_to_watts(lux), 2)
+            azimuth = solar_rad_expected.calc_azimuth(sensor_latitude, sensor_longitude)
+            altitude = solar_rad_expected.calc_altitude(sensor_latitude, sensor_longitude)
+            solar_watts_theoretical = round(solar_rad_expected.get_solar_radiation_theoretical(altitude), 2)
+            sky_condition = solar_funcs.map_lux_to_sky_condition(lux)
 
             # CRHUDA model https://www.researchgate.net/publication/337236701_Algorithm_to_Predict_the_Rainfall_Starting_Point_as_a_Function_of_Atmospheric_Pressure_Humidity_and_Dewpoint
             # This metric calculation should be moved OUT of cloudmetricsd
@@ -119,19 +163,40 @@ def main():
             metrics['window_len'] = window_len
             metrics['poll_secs'] = poll_secs
             metrics['topic'] = topic
+            metrics['version'] = version
+
+            # sensor information
+            metrics['sensor_name'] = sensor_name
+            metrics['sensor_city'] = sensor_city
+            metrics['sensor_location'] = sensor_location
+            metrics['sensor_postcode'] = sensor_postcode
+            metrics['sensor_latitude'] = sensor_latitude
+            metrics['sensor_longitude'] = sensor_longitude
             metrics['sensor_elevation_m'] = sensor_elevation_m
 
-            # raw data
+            # Moon information
+            metrics['moon_phase_description'] = moon_phase_description
+            metrics['moon_light_percent'] = moon_light_percent
+
+            # Sun information
+            metrics['azimuth'] = azimuth
+            metrics['altitude'] = altitude
+            metrics['solar_watts_theoretical'] = solar_watts_theoretical
+
+            # Meteo sensor reading data
             metrics['temp_c'] = temperature                 # sensor height above sea-level
             metrics['humidity'] = humidity
             metrics['pressure_abs'] = pressure              # absolute i.e. not sea level
+            metrics['lux'] = lux
+            metrics['solar_watts'] = solar_watts
 
             # derived data
             metrics['pressure_sea'] = sea_level_pressure    #
             metrics['dew_point'] = dew_point_c
             metrics['wet_bulb'] = wet_bulb_c
+            metrics['sky_condition'] = sky_condition
             metrics['cloud_base_ft'] = cloud_base_ft
-            metrics['crhuda_primed'] = -10 # To be added in the future
+            metrics['crhuda_primed'] = -10      # To be added in the future
 
             # smoothed data
             metrics['temp_c_smoothed'] = temperature_smoothed.get_moving_average()

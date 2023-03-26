@@ -22,11 +22,11 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
 
         # Setup the API to use local USB devices
         if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
-            msg = "Error : Meteo sensor init error : " + errmsg.value
+            msg = "Error : meteo sensor init error : " + errmsg.value
             print(msg)
             return None, None, None, msg
         else:
-            print('Meteo sensor registered OK')
+            print('meteo sensor registered OK')
 
         module = YModule.FirstModule()
         serial_number = module.get_module()
@@ -49,7 +49,7 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
         press_sensor = YPressure.FindPressure(target + '.pressure')
 
         if not (m.isOnline()):
-            msg = 'Error : Meteo sensor not connected'
+            msg = 'Error : meteo sensor not connected'
             print(msg)
             return None, None, None, msg
 
@@ -58,7 +58,7 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
         print(press_sensor.__str__())
         print(temp_sensor.__str__())
 
-        return hum_sensor, press_sensor, temp_sensor, 'Meteo sensor registered OK'
+        return hum_sensor, press_sensor, temp_sensor, 'meteo sensor registered OK'
 
     except Exception as e:
         print('register_meteo2_sensor() : exception : ' + e.__str__())
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     hum_sensor, press_sensor, temperature_sensor, status_msg = register_meteo2_sensor()
     print(status_msg)
 
-    if status_msg != 'Meteo sensor registered OK':
+    if status_msg != 'meteo sensor registered OK':
         sys.exit('Exiting, unable to register Meteo sensor')
 
     while True:

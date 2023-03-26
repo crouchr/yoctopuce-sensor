@@ -10,6 +10,10 @@ temp, pressure, humidity sensor and sending to MQTT topic for downstream process
 - Ensure that any 'tweakable' values can be changed without restarting the container
 
 
+PRINCIPLES
+----------
+- This container must not connect to any Internet services - its focus is on publishing to MQRR
+
 TODO
 ----
 - Add the crhuda values - and smoothed versions of

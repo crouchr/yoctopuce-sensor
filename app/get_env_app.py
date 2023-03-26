@@ -82,25 +82,25 @@ def get_sensor_location():
         sensor_location = 'Top room lab'
 
     return sensor_location
-def get_sensor_post_code():
+def get_sensor_postcode():
     if 'SENSOR_POSTCODE' in os.environ:
-        sensor_postcode = os.environ['SENSOR_POSTCODE']
+        sensor_postcode = os.environ['SENSOR_POSTCODE'].upper()
     else:
-        sensor_postcode = 'RG20 8LH'
+        sensor_postcode = 'rg20 8LH'.upper()
 
     return sensor_postcode
 def get_sensor_latitude():
     if 'SENSOR_LATITUDE' in os.environ:
         sensor_latitude = os.environ['SENSOR_LATITUDE']
     else:
-        sensor_latitude = '0.1 N'
+        sensor_latitude = '51.4151'
 
     return sensor_latitude
 def get_sensor_longitude():
     if 'SENSOR_LONGITUDE' in os.environ:
         sensor_longitude = os.environ['SENSOR_LONGITUDE']
     else:
-        sensor_longitude = '0.1 W'
+        sensor_longitude = '-1.3667'
 
     return sensor_longitude
 
@@ -109,7 +109,7 @@ def get_site_elevation():
     if 'SITE_ELEVATION' in os.environ:
         site_elevation = os.environ['SITE_ELEVATION']
     else:
-        # FIXME : the mean_se_level function cannot handle 0 - so fix it and return to default here of 0m
+        # FIXME : the mean_sea_level function cannot handle 0 - so fix it and return to default here of 0m
         site_elevation = 90      # default is sea-level - i.e. running on a boat at sea
     return site_elevation
 
