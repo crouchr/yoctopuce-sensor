@@ -43,6 +43,7 @@ def main():
 
         # Sensor information
         sensor_name = get_env_app.get_sensor_name()
+        public_sensor_name = get_env_app.get_public_sensor_name()
         sensor_city = get_env_app.get_sensor_city()
         sensor_location = get_env_app.get_sensor_location()
         sensor_postcode = get_env_app.get_sensor_postcode()
@@ -169,6 +170,7 @@ def main():
 
             # sensor information
             metrics['sensor_name'] = sensor_name
+            metrics['public_sensor_name'] = public_sensor_name
             metrics['sensor_city'] = sensor_city
             metrics['sensor_location'] = sensor_location
             metrics['sensor_postcode'] = sensor_postcode

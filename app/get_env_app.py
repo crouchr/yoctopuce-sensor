@@ -61,6 +61,7 @@ def get_rain_k_factor():
 
     return rain_k_factor
 
+# This is internal name
 def get_sensor_name():
     if 'SENSOR_NAME' in os.environ:
         sensor_name = os.environ['SENSOR_NAME']
@@ -68,6 +69,20 @@ def get_sensor_name():
         sensor_name = 'dev_test_sensor_1'
 
     return sensor_name
+
+def get_public_sensor_name():
+    """
+    Return the public name of the sensor - may be less detailed than sensor_name
+    e.g. preserve privacy
+    :return:
+    """
+    if 'PUBLIC_SENSOR_NAME' in os.environ:
+        public_sensor_name = os.environ['PUBLIC_SENSOR_NAME']
+    else:
+        public_sensor_name = 'Stockcross Public Sensor'
+
+    return public_sensor_name
+
 def get_sensor_city():
     if 'SENSOR_CITY' in os.environ:
         sensor_city = os.environ['SENSOR_CITY']

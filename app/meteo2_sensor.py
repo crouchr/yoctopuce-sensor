@@ -29,8 +29,8 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
             print('meteo sensor registered OK')
 
         module = YModule.FirstModule()
-        serial_number = module.get_module()
-        product_name = module.get_productName()
+        serial_number = module.get_module()         # FIXME : add to metrics
+        product_name = module.get_productName()     # FIXME : add to metrics
         print("serial_number is " + serial_number.__str__())
         print("product_name is " + product_name.__str__())
 
