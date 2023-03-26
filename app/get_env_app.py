@@ -61,6 +61,48 @@ def get_rain_k_factor():
 
     return rain_k_factor
 
+def get_sensor_name():
+    if 'SENSOR_NAME' in os.environ:
+        sensor_name = os.environ['SENSOR_NAME']
+    else:
+        sensor_name = 'dev_test_sensor_1'
+
+    return sensor_name
+def get_sensor_city():
+    if 'SENSOR_CITY' in os.environ:
+        sensor_city = os.environ['SENSOR_CITY']
+    else:
+        sensor_city = 'Stockcross'
+
+    return sensor_city
+def get_sensor_location():
+    if 'SENSOR_LOCATION' in os.environ:
+        sensor_location = os.environ['SENSOR_LOCATION']
+    else:
+        sensor_location = 'Top room lab'
+
+    return sensor_location
+def get_sensor_post_code():
+    if 'SENSOR_POSTCODE' in os.environ:
+        sensor_postcode = os.environ['SENSOR_POSTCODE']
+    else:
+        sensor_postcode = 'RG20 8LH'
+
+    return sensor_postcode
+def get_sensor_latitude():
+    if 'SENSOR_LATITUDE' in os.environ:
+        sensor_latitude = os.environ['SENSOR_LATITUDE']
+    else:
+        sensor_latitude = '0.1 N'
+
+    return sensor_latitude
+def get_sensor_longitude():
+    if 'SENSOR_LONGITUDE' in os.environ:
+        sensor_longitude = os.environ['SENSOR_LONGITUDE']
+    else:
+        sensor_longitude = '0.1 W'
+
+    return sensor_longitude
 
 # elevation in metres
 def get_site_elevation():

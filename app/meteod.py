@@ -23,7 +23,7 @@ def main():
     try:
         metrics = {}
 
-        bypass_sensor = True    # i.e. during development
+        bypass_sensor = False    # i.e. set to True if no sensor attached during development
 
         broker = get_env_app.get_mqttd_host()
         port = get_env_app.get_mqttd_port()
