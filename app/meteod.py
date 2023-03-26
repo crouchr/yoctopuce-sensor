@@ -86,6 +86,7 @@ def main():
             vane_height_m = float(get_env_app.get_vane_height_m())
             site_elevation_m = float(get_env_app.get_site_elevation())
             sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
+            sensor_notes = get_env_app.get_sensor_notes()
             rain_k_factor = float(get_env_app.get_rain_k_factor())  # can tweak without restarting container
             print(f'site_elevation_m : {site_elevation_m}')
             print(f'vane_height_m : {vane_height_m}')
@@ -178,6 +179,7 @@ def main():
 
             # sensor information
             metrics['sensor_name'] = sensor_name
+            metrics['sensor_notes'] = sensor_notes
             metrics['public_sensor_name'] = public_sensor_name
             metrics['sensor_city'] = sensor_city
             metrics['sensor_location'] = sensor_location

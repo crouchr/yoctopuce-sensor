@@ -28,7 +28,8 @@ def get_vane_height_m():
     if 'VANE_HEIGHT' in os.environ:
         vane_height = os.environ['VANE_HEIGHT']
     else:
-        vane_height = 3.7       # value in Ermin Street
+        #vane_height = 3.7       # Aercus weather station on top of shed
+        vane_height = 1.0       # Yoctopuce sensor on side of shed
 
     return vane_height
 
@@ -97,6 +98,15 @@ def get_sensor_location():
         sensor_location = 'Top room lab'
 
     return sensor_location
+
+def get_sensor_notes():
+    if 'SENSOR_NOTES' in os.environ:
+        sensor_notes = os.environ['SENSOR_NOTES']
+    else:
+        sensor_notes = 'Here are some notes about this sensor'
+
+    return sensor_notes
+
 def get_sensor_postcode():
     if 'SENSOR_POSTCODE' in os.environ:
         sensor_postcode = os.environ['SENSOR_POSTCODE'].upper()
