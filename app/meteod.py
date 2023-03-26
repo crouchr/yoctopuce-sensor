@@ -40,6 +40,8 @@ def main():
         topic = get_env_app.get_mqttd_topic()
         poll_secs = get_env_app.get_poll_secs()
         window_len = get_env_app.get_window_len()
+        sensor_started_timestamp = time.ctime()
+        sensor_started_epoch = time.time()
 
         # Sensor information
         sensor_name = get_env_app.get_sensor_name()
@@ -99,6 +101,8 @@ def main():
             tm_day = time_struct.tm_mday
             tm_daylight_savings_time = time_struct.tm_isdst
             tm_zone = time_struct.tm_zone
+            sensor_uptime_secs = int(utc_epoch - sensor_started_epoch) # seconds
+            sensor_uptime_days = int(sensor_uptime_secs / (3600 * 24))
 
             # moon-related
             moon_phase_tuple = moon_phase.moon_phase(tm_month, tm_day, tm_year)
@@ -167,6 +171,10 @@ def main():
             metrics['poll_secs'] = poll_secs
             metrics['topic'] = topic
             metrics['version'] = version
+            metrics['sensor_uptime_secs'] = sensor_uptime_secs
+            metrics['sensor_uptime_days'] = sensor_uptime_days
+            metrics['sensor_started_epoch'] = sensor_started_epoch
+            metrics['sensor_started_timestamp'] = sensor_started_timestamp
 
             # sensor information
             metrics['sensor_name'] = sensor_name
