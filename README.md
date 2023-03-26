@@ -17,3 +17,8 @@ PRINCIPLES
 TODO
 ----
 - Add the crhuda values - and smoothed versions of
+
+TESTING
+-------
+- check that crhuda values can all be tweaked without interrupting container
+- check that container can be built on Rasp Pi - if not it may mean keeping only the most basic of metrics
