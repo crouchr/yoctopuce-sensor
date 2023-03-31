@@ -30,6 +30,7 @@ import moving_averages
 import simple_fog
 import get_sunrise_sunset
 
+
 def main():
     try:
         metrics = {}
@@ -133,20 +134,24 @@ def main():
             # Fog prediction
             predict_fog = simple_fog.fog_algo_yocto(temperature, dew_point_c, wet_bulb_c, humidity)
 
-
             # solar-related information - this uses external API - replace with local calculation
-            # Add some error handling here - dodgy Internet etc
+            # Add some error handling / retry here - dodgy Internet etc
             status_code, response = get_sunrise_sunset.get_solar_info_api1(sensor_latitude, sensor_longitude)
             if status_code != 200:
-                print('error : failed to get sunrise/set information, status_code=' + status_code.__str__())
-
-            civil_twilight_begin = response['civil_twilight_begin']
-            civil_twilight_end = response['civil_twilight_end']
-            sunrise = response['sunrise']
-            solar_noon = response['solar_noon']
-            sunset = response['sunset']
-
-            day_length = response['day_length']
+                print('error : failed to get sunrise information via Internet API, status_code=' + status_code.__str__())
+                civil_twilight_begin = 'none'
+                civil_twilight_end = 'none'
+                sunrise = 'none'
+                solar_noon = 'none'
+                sunset = 'none'
+                day_length = -1
+            else:
+                civil_twilight_begin = response['civil_twilight_begin']
+                civil_twilight_end = response['civil_twilight_end']
+                sunrise = response['sunrise']
+                solar_noon = response['solar_noon']
+                sunset = response['sunset']
+                day_length = response['day_length']
 
             # CRHUDA model https://www.researchgate.net/publication/337236701_Algorithm_to_Predict_the_Rainfall_Starting_Point_as_a_Function_of_Atmospheric_Pressure_Humidity_and_Dewpoint
             # This metric calculation should be moved OUT of cloudmetricsd
@@ -223,7 +228,7 @@ def main():
             metrics['sunrise'] = sunrise
             metrics['solar_noon'] = solar_noon
             metrics['sunset'] = sunset
-            metrics['day_length'] = day_length
+            metrics['day_length_hours'] = day_length
 
             # Snow information
             metrics['snow_prognosis_text'] = snow_prognosis_text
@@ -266,6 +271,7 @@ def main():
             time.sleep(poll_secs)
 
     except Exception as e:
+        print(f'main() : exception : {e}')
         traceback.print_exc()
 
 

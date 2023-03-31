@@ -1,4 +1,4 @@
-# copied from metmini-misc
+# originally copied from metmini-misc - this version is now improved and should be master
 # Access external API at https://sunrise-sunset.org/api
 import requests
 import json
@@ -33,52 +33,61 @@ def get_solar_info_api1(lat, lon):
     >>> get_solar_info_api1(51.4146, -1.3749)
 
     """
-    answer = {}
+    try:
+        answer = {}
 
-    url = "https://api.sunrise-sunset.org/json?" +\
-        "lat=" + lat.__str__() + \
-        "&lng=" + lon.__str__() + \
-        "&date=today"
+        url = "https://api.sunrise-sunset.org/json?" +\
+            "lat=" + lat.__str__() + \
+            "&lng=" + lon.__str__() + \
+            "&date=today"
 
-    response = requests.get(url)
+        response = requests.get(url)
 
-    if response.status_code != 200:
-        return response.status_code, None
+        if response.status_code != 200:
+            a = 1/0     # FIXME throw an exception
+            #return response.status_code, None
 
-    response_dict = json.loads(response.content.decode('utf-8'))
+        response_dict = json.loads(response.content.decode('utf-8'))
 
-    answer['civil_twilight_begin'] = convert_to_24_hour(response_dict['results']['civil_twilight_begin'])
-    answer['sunrise'] =  convert_to_24_hour(response_dict['results']['sunrise'])
-    answer['solar_noon'] = convert_to_24_hour(response_dict['results']['solar_noon'])
-    answer['sunset'] =  convert_to_24_hour(response_dict['results']['sunset'])
-    answer['civil_twilight_end'] = convert_to_24_hour(response_dict['results']['civil_twilight_end'])
-    answer['day_length'] = response_dict['results']['day_length']
+        answer['civil_twilight_begin'] = convert_to_24_hour(response_dict['results']['civil_twilight_begin'])
+        answer['sunrise'] = convert_to_24_hour(response_dict['results']['sunrise'])
+        answer['solar_noon'] = convert_to_24_hour(response_dict['results']['solar_noon'])
+        answer['sunset'] = convert_to_24_hour(response_dict['results']['sunset'])
+        answer['civil_twilight_end'] = convert_to_24_hour(response_dict['results']['civil_twilight_end'])
+        answer['day_length'] = response_dict['results']['day_length']
 
-    return response.status_code, answer
+        return response.status_code, answer
+
+    except Exception as e:
+        print(f'get_solar_info_api1() : exception : {e})')
+        answer['exception'] = e.__str__()
+        return -1, answer
 
 
 # testing
 if __name__ == '__main__':
+    try:
+        my_lat = 51.4146
+        my_lon = -1.3749
 
-    my_lat = 51.4146
-    my_lon = -1.3749
+        print('lat = ' + my_lat.__str__())
+        print('lon = ' + my_lon.__str__())
 
-    print('lat = ' + my_lat.__str__())
-    print('lon = ' + my_lon.__str__())
+        status_code, response = get_solar_info_api1(my_lat, my_lon)
+        print(f'status_code : {status_code}')
+        if status_code != 200:
+            print('status_code=' + status_code.__str__())
 
-    status_code, response = get_solar_info_api1(my_lat, my_lon)
+        print('civil_twilight_begin = ' + response['civil_twilight_begin'])
+        print('sunrise = ' + response['sunrise'])
+        print('solar_noon = ' + response['solar_noon'])
+        print('sunset = ' + response['sunset'])
+        print('civil_twilight_end = ' + response['civil_twilight_end'])
+        print('day_length = ' + response['day_length'])
 
-    if status_code != 200:
-        print('status_code=' + status_code.__str__())
+        print('finished')
 
-    print('civil_twilight_begin = ' + response['civil_twilight_begin'])
-    print('sunrise = ' + response['sunrise'])
-    print('solar_noon = ' + response['solar_noon'])
-    print('sunset = ' + response['sunset'])
-    print('civil_twilight_end = ' + response['civil_twilight_end'])
-    print('day_length = ' + response['day_length'])
-
-    print('finished')
-
+    except Exception as e:
+        print(f'main() : exception : {e})')
 
 

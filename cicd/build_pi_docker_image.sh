@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run this on the yoctopi node itself
+# Run this on the yoctopi PI node itself
 
 VERSION=1.0.0
 
