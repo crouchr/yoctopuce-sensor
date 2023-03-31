@@ -1,6 +1,7 @@
 import sys
 import time
 import json
+import platform
 # http://www.steves-internet-guide.com/publishing-messages-mqtt-client/
 import traceback
 
@@ -45,6 +46,11 @@ def main():
         window_len = get_env_app.get_window_len()
         sensor_started_timestamp = time.ctime()
         sensor_started_epoch = time.time()
+
+        # Platform information
+        sensor_hardware = platform.platform()
+        sensor_node = platform.node()
+        sensor_machine = platform.machine()
 
         # Sensor information
         sensor_name = get_env_app.get_sensor_name()
@@ -201,6 +207,11 @@ def main():
             metrics['sensor_uptime_days'] = sensor_uptime_days
             metrics['sensor_started_epoch'] = sensor_started_epoch
             metrics['sensor_started_timestamp'] = sensor_started_timestamp
+
+            # platform (e.g. hardware) information
+            metrics['sensor_hw_platform'] = sensor_hardware
+            metrics['sensor_hw_node'] = sensor_node
+            metrics['sensor_hw_machine'] = sensor_machine
 
             # sensor information
             metrics['sensor_name'] = sensor_name

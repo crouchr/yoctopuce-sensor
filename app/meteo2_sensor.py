@@ -27,7 +27,6 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
                 msg = "register_meteo2_sensor() : error : meteo sensor API init error : " + errmsg.value
                 print(msg)
                 print('sleeping...')
-                print('\a')
                 time.sleep(10)
                 continue
             else:
@@ -43,7 +42,7 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
                 # retrieve any sensor
                 sensor = YHumidity.FirstHumidity()
                 if sensor is None:
-                    msg = 'Error : check met sensor USB cable'
+                    msg = 'check meteo sensor USB cable'
                     raise Exception(msg)
 
                 m = sensor.get_module()
@@ -54,7 +53,7 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
             press_sensor = YPressure.FindPressure(target + '.pressure')
 
             if not (m.isOnline()):
-                msg = 'Error : meteo sensor not connected'
+                msg = 'meteo sensor not connected'
                 raise Exception(msg)
 
             print('Meteo sensor registered OK')
