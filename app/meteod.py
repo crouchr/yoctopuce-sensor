@@ -27,6 +27,7 @@ import snow_probability
 # artifacts (metminifuncs)
 import moving_averages
 
+import simple_fog
 
 def main():
     try:
@@ -128,6 +129,21 @@ def main():
             sky_condition = solar_funcs.map_lux_to_sky_condition(lux)
             snow_prognosis_text, _, snow_prob_percent = snow_probability.calc_snow_probability(temperature, humidity)
 
+            predict_fog = simple_fog.fog_algo_yocto(temperature, dew_point_c, wet_bulb_c, humidity)
+
+            # FIXME
+            # solar-related information - can't find the master code for this
+            # status_code, response = get_solar_info_api1(my_lat, my_lon)
+            # if status_code != 200:
+            #     print('status_code=' + status_code.__str__())
+            #
+            # pcivil_twilight_begin = ' + response['civil_twilight_begin'])
+            # print('sunrise = ' + response['sunrise'])
+            # print('solar_noon = ' + response['solar_noon'])
+            # print('sunset = ' + response['sunset'])
+            # print('civil_twilight_end = ' + response['civil_twilight_end'])
+            # print('day_length = ' + response['day_length'])
+
             # CRHUDA model https://www.researchgate.net/publication/337236701_Algorithm_to_Predict_the_Rainfall_Starting_Point_as_a_Function_of_Atmospheric_Pressure_Humidity_and_Dewpoint
             # This metric calculation should be moved OUT of cloudmetricsd
             if dew_point_c < 1.0:
@@ -215,6 +231,9 @@ def main():
             metrics['sky_condition'] = sky_condition
             metrics['cloud_base_ft'] = cloud_base_ft
             metrics['crhuda_primed'] = -10      # To be added in the future
+
+            # predictions
+            metrics['predict_fog'] = predict_fog
 
             # smoothed data
             metrics['temp_c_smoothed'] = temperature_smoothed.get_moving_average()

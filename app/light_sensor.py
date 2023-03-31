@@ -42,13 +42,25 @@ def get_lux(sensor):
     :return:
     """
 
-    if sensor.isOnline():
-        lux = sensor.get_currentValue()
-        if lux < 0.1:
-            lux = 0.0           # headlights of passing cars ?
-        return lux
-    else:
-        return None
+    recovered = False
+
+    while True:
+        try:
+            if sensor.isOnline():
+                lux = sensor.get_currentValue()
+                if lux < 0.1:
+                    lux = 0.0           # headlights of passing cars ?
+                if recovered:
+                    print('get_lux() : yoctopuce sensor recovered')
+                return lux
+            else:
+                print('get_lux() : error : failed to read light data from yoctopuce, so sleeping...')
+                recovered = True
+                time.sleep(5)
+        except Exception as e:
+            print(f"get_lux() : exception : {e}, so sleeping...")
+            recovered = True
+            time.sleep(5)
 
 
 # Simple test loop

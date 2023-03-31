@@ -1,5 +1,13 @@
-todo
+TODO
 ====
+
+PRIORITY 
+---------
+- eliminate all use of artifacts - have all the source in the project and mark up the sources to indicate this
+- test container can be built on Rasp Pi
+
+OTHER
+-----
 - add sunrise and sunset times
 - add moonrise and moonset times
 - add okta calculation
@@ -15,3 +23,22 @@ todo
 - add three hour pressure trend - quantitative - e.g. met office style
 - add forecast based on pressure trend
 - theoretical solar charging watts ? - is there a calculation on internet ?
+
+CHAOS MONKEYS
+-------------
+- Test case where both sensors are unplugged at random 
+ - Ensure the event is loggable, trapped by exception, recoverable 
+
+BUGS
+----
+- handle cases where data returned by the sensors may be 'None' - e.g.
+vane_height_m : 1.0
+sensor_elevation_m : 91.0
+rain_k_factor : 0.167
+Traceback (most recent call last):
+  File "/home/crouchr/PycharmProjects/yoctopuce-sensor/app/meteod.py", line 120, in main
+    sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
+  File "/usr/lib/python3.10/site-packages/mean_sea_level_pressure.py", line 24, in msl_k_factor
+    temp_rounded = int(round(temp_c/10)*10)
+TypeError: unsupported operand type(s) for /: 'NoneType' and 'int'
+

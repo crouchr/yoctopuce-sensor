@@ -77,17 +77,26 @@ def get_meteo_values(hum_sensor, press_sensor, temperature_sensor, bypass_sensor
 
     if bypass_sensor:
         return 60.0, 990.0, 25.0
+    recovered = False
 
-    if hum_sensor.isOnline():
-        humidity = hum_sensor.get_currentValue()
-        pressure = press_sensor.get_currentValue()
-        temperature = temperature_sensor.get_currentValue()
-    else:
-        humidity = None
-        pressure = None
-        temperature = None
-
-    return humidity, pressure, temperature
+    while True:
+        try:
+            if hum_sensor.isOnline():
+                humidity = hum_sensor.get_currentValue()
+                pressure = press_sensor.get_currentValue()
+                temperature = temperature_sensor.get_currentValue()
+                if humidity is not None and pressure is not None and temperature is not None:
+                    if recovered:
+                        print('get_meteo_values() : yoctopuce sensor recovered')
+                    return humidity, pressure, temperature
+            else:
+                print('get_meteo_values() : error : failed to read met data from yoctopuce, so sleeping...')
+                recovered = True
+                time.sleep(5)
+        except Exception as e:
+            print(f"get_meteo_values() : exception : {e}, so sleeping...")
+            recovered = True
+            time.sleep(5)
 
 
 # Simple test loop
