@@ -1,5 +1,5 @@
 # based on Debian Buster
-FROM python:3.8.5-buster
+FROM python:3.10-buster
 LABEL author="Richard Crouch"
 LABEL description="Meteod & Yoctopuce Metv2 Daemon"
 
