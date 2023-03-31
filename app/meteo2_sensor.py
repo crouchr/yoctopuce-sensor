@@ -13,57 +13,62 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
     :param target:
     :return:
     """
-    try:
-        print('Entered register_meteo2_sensor()')
-        if bypass_sensor:
-            return None, None, None, 'Emulated that Meteo sensor registered OK'
 
-        errmsg = YRefParam()
+    while True:
+        try:
+            print('Entered register_meteo2_sensor()')
+            if bypass_sensor:
+                return None, None, None, 'Emulated that Meteo sensor registered OK'
 
-        # Setup the API to use local USB devices
-        if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
-            msg = "Error : meteo sensor init error : " + errmsg.value
-            print(msg)
-            return None, None, None, msg
-        else:
-            print('meteo sensor registered OK')
+            errmsg = YRefParam()
 
-        module = YModule.FirstModule()
-        serial_number = module.get_module()         # FIXME : add to metrics
-        product_name = module.get_productName()     # FIXME : add to metrics
-        print("serial_number is " + serial_number.__str__())
-        print("product_name is " + product_name.__str__())
-
-        if target == 'any':
-            # retrieve any sensor
-            sensor = YHumidity.FirstHumidity()
-            if sensor is None:
-                msg = 'Error : Check Meteo sensor USB cable'
+            # Setup the API to use local USB devices
+            if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
+                msg = "register_meteo2_sensor() : error : meteo sensor API init error : " + errmsg.value
                 print(msg)
-                return None, None, None, msg
-            m = sensor.get_module()
-            target = m.get_serialNumber()
+                print('sleeping...')
+                print('\a')
+                time.sleep(10)
+                continue
+            else:
+                print('meteo sensor registered API OK')
 
-        hum_sensor = YHumidity.FindHumidity(target + '.humidity')
-        temp_sensor = YTemperature.FindTemperature(target + '.temperature')
-        press_sensor = YPressure.FindPressure(target + '.pressure')
+            module = YModule.FirstModule()
+            serial_number = module.get_module()         # FIXME : add to metrics
+            product_name = module.get_productName()     # FIXME : add to metrics
+            #print("serial_number is " + serial_number.__str__())
+            #print("product_name is " + product_name.__str__())
 
-        if not (m.isOnline()):
-            msg = 'Error : meteo sensor not connected'
-            print(msg)
-            return None, None, None, msg
+            if target == 'any':
+                # retrieve any sensor
+                sensor = YHumidity.FirstHumidity()
+                if sensor is None:
+                    msg = 'Error : check met sensor USB cable'
+                    raise Exception(msg)
 
-        print('Meteo sensor registered OK')
-        print(hum_sensor.__str__())
-        print(press_sensor.__str__())
-        print(temp_sensor.__str__())
+                m = sensor.get_module()
+                target = m.get_serialNumber()
 
-        return hum_sensor, press_sensor, temp_sensor, 'meteo sensor registered OK'
+            hum_sensor = YHumidity.FindHumidity(target + '.humidity')
+            temp_sensor = YTemperature.FindTemperature(target + '.temperature')
+            press_sensor = YPressure.FindPressure(target + '.pressure')
 
-    except Exception as e:
-        print('register_meteo2_sensor() : exception : ' + e.__str__())
-        YAPI.FreeAPI()
-        return None, None, None, e.__str__()
+            if not (m.isOnline()):
+                msg = 'Error : meteo sensor not connected'
+                raise Exception(msg)
+
+            print('Meteo sensor registered OK')
+            print(hum_sensor.__str__())
+            print(press_sensor.__str__())
+            print(temp_sensor.__str__())
+
+            return hum_sensor, press_sensor, temp_sensor, 'meteo sensor registered OK'
+
+        except Exception as e:
+            print('register_meteo2_sensor() : exception : ' + e.__str__())
+            print('sleeping...')
+            YAPI.FreeAPI()
+            time.sleep(5)
 
 
 def get_meteo_values(hum_sensor, press_sensor, temperature_sensor, bypass_sensor=False):

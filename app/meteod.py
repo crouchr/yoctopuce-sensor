@@ -262,7 +262,9 @@ def main():
             metrics['crhuda_s2_delta'] = s2_delta
 
             MQTT_MSG = json.dumps(metrics)
+            print('====================================')
             pprint(metrics)
+            print('====================================')
 
             # publish payload to MQTT topic
             ret = client1.publish(topic=topic, payload=MQTT_MSG)

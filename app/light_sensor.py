@@ -3,36 +3,46 @@ from yoctopuce.yocto_lightsensor import *
 
 
 def register_light_sensor(target='any'):
-    try:
-        print('entered register_light_sensor()')
+    while True:
+        try:
+            print('entered register_light_sensor()')
 
-        errmsg = YRefParam()
+            errmsg = YRefParam()
 
-        # Setup the API to use local USB devices
-        if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
-            msg = "Error : light sensor init error" + errmsg.value
-            return None, msg
+            # Setup the API to use local USB devices
+            if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
+                msg = "register_light_sensor() : error : light sensor API init error : " + errmsg.value
+                print(msg)
+                print('sleeping...')
+                print('\a')
+                time.sleep(10)
+                continue
 
-        if target == 'any':
-            # retrieve any Light sensor
-            sensor = YLightSensor.FirstLightSensor()
-            if sensor is None:
-                msg = 'Error : check light sensor USB cable'
-                return None, msg
-        else:
-            sensor = YLightSensor.FindLightSensor(target + '.lightSensor')
+            module = YModule.FirstModule()
+            serial_number = module.get_module()         # FIXME : add to metrics
+            product_name = module.get_productName()     # FIXME : add to metrics
 
-        if not (sensor.isOnline()):
-            msg = 'Error : light sensor device not connected'
-            return None, msg
+            if target == 'any':
+                # retrieve any Light sensor
+                sensor = YLightSensor.FirstLightSensor()
+                if sensor is None:
+                    msg = 'Error : check light sensor USB cable'
+                    raise Exception(msg)
+            else:
+                sensor = YLightSensor.FindLightSensor(target + '.lightSensor')
 
-        print('light sensor registered OK')
-        return sensor, 'light sensor registered OK'
+            if not (sensor.isOnline()):
+                msg = 'Error : light sensor device not connected'
+                raise Exception(msg)
 
-    except Exception as e:
-        print(e.__str__())
-        YAPI.FreeAPI()
-        return None
+            print('light sensor registered OK')
+            return sensor, 'light sensor registered OK'
+
+        except Exception as e:
+            print('register_light_sensor() : exception : ' + e.__str__())
+            print('sleeping...')
+            YAPI.FreeAPI()
+            time.sleep(5)
 
 
 def get_lux(sensor):

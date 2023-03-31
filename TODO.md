@@ -8,6 +8,9 @@ PRIORITY
 
 OTHER
 -----
+- add some alarms for going outside temp and humidity alarms
+- make day_length_hours into a decimal
+- add beep when sensor issues
 - add some logging to papertrail ?
 - add moonrise and moonset times
 - add okta calculation
