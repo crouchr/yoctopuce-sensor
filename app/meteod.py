@@ -28,6 +28,7 @@ import snow_probability
 import moving_averages
 
 import simple_fog
+import get_sunrise_sunset
 
 def main():
     try:
@@ -129,20 +130,23 @@ def main():
             sky_condition = solar_funcs.map_lux_to_sky_condition(lux)
             snow_prognosis_text, _, snow_prob_percent = snow_probability.calc_snow_probability(temperature, humidity)
 
+            # Fog prediction
             predict_fog = simple_fog.fog_algo_yocto(temperature, dew_point_c, wet_bulb_c, humidity)
 
-            # FIXME
-            # solar-related information - can't find the master code for this
-            # status_code, response = get_solar_info_api1(my_lat, my_lon)
-            # if status_code != 200:
-            #     print('status_code=' + status_code.__str__())
-            #
-            # pcivil_twilight_begin = ' + response['civil_twilight_begin'])
-            # print('sunrise = ' + response['sunrise'])
-            # print('solar_noon = ' + response['solar_noon'])
-            # print('sunset = ' + response['sunset'])
-            # print('civil_twilight_end = ' + response['civil_twilight_end'])
-            # print('day_length = ' + response['day_length'])
+
+            # solar-related information - this uses external API - replace with local calculation
+            # Add some error handling here - dodgy Internet etc
+            status_code, response = get_sunrise_sunset.get_solar_info_api1(sensor_latitude, sensor_longitude)
+            if status_code != 200:
+                print('error : failed to get sunrise/set information, status_code=' + status_code.__str__())
+
+            civil_twilight_begin = response['civil_twilight_begin']
+            civil_twilight_end = response['civil_twilight_end']
+            sunrise = response['sunrise']
+            solar_noon = response['solar_noon']
+            sunset = response['sunset']
+
+            day_length = response['day_length']
 
             # CRHUDA model https://www.researchgate.net/publication/337236701_Algorithm_to_Predict_the_Rainfall_Starting_Point_as_a_Function_of_Atmospheric_Pressure_Humidity_and_Dewpoint
             # This metric calculation should be moved OUT of cloudmetricsd
@@ -212,6 +216,14 @@ def main():
             metrics['solar_azimuth'] = azimuth
             metrics['solar_altitude'] = altitude
             metrics['solar_watts_theoretical'] = solar_watts_theoretical
+
+            # More solar information - via Internet API
+            metrics['civil_twilight_begin'] = civil_twilight_begin
+            metrics['civil_twilight_end'] = civil_twilight_end
+            metrics['sunrise'] = sunrise
+            metrics['solar_noon'] = solar_noon
+            metrics['sunset'] = sunset
+            metrics['day_length'] = day_length
 
             # Snow information
             metrics['snow_prognosis_text'] = snow_prognosis_text
