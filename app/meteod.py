@@ -239,7 +239,7 @@ def main():
             metrics['humidity'] = humidity
             metrics['pressure_abs'] = pressure              # absolute i.e. not sea level
             metrics['lux'] = lux
-            metrics['solar_watts'] = solar_watts
+            metrics['solar_watts_m_squared'] = solar_watts
 
             # derived data
             metrics['pressure_sea'] = sea_level_pressure    #

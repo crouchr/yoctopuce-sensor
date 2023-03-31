@@ -8,13 +8,14 @@ PRIORITY
 
 OTHER
 -----
-- add sunrise and sunset times
+- add some logging to papertrail ?
 - add moonrise and moonset times
 - add okta calculation
 - add evapotranspiration metric 
 - add is_day, is_night, is_full_moon
 - add a function 'full_moon in x days'
 - add is_freezing
+- is_spring_tide, is_neap_tide
 - add last_freezing_days_ago - i.e. when can plants be planted out ?
 - add is_foggy (set wind_speed = 0)
 - serial_number = module.get_module()         # FIXME : add to metrics
@@ -24,10 +25,15 @@ OTHER
 - add forecast based on pressure trend
 - theoretical solar charging watts ? - is there a calculation on internet ?
 
+DONE
+----
+- add sunrise and sunset times - done but need to test with network failures
+- add fog prediction - done
+
 CHAOS MONKEYS
 -------------
 - Test case where both sensors are unplugged at random 
- - Ensure the event is loggable, trapped by exception, recoverable 
+- Ensure the event is loggable, trapped by exception, recoverable 
 
 BUGS
 ----

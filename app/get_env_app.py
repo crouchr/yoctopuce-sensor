@@ -23,7 +23,7 @@ def get_window_len():
     return window_len
 
 
-# Actual wind vane height to allow for multiplier
+# Actual wind vane / sensor height to allow for multiplier
 def get_vane_height_m():
     if 'VANE_HEIGHT' in os.environ:
         vane_height = os.environ['VANE_HEIGHT']
