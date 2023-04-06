@@ -66,6 +66,8 @@ def main():
         sea_level_pressure_smoothed = moving_averages.MovingAverage(window_len)
         temperature_smoothed = moving_averages.MovingAverage(window_len)
         humidity_smoothed = moving_averages.MovingAverage(window_len)
+        lux_smoothed = moving_averages.MovingAverage(window_len)
+        solar_watts_smoothed = moving_averages.MovingAverage(window_len)
         s1_m_avg = moving_averages.MovingAverage(window_len)
         s2_m_avg = moving_averages.MovingAverage(window_len)
 
@@ -195,6 +197,9 @@ def main():
             sea_level_pressure_smoothed.add(sea_level_pressure)
             humidity_smoothed.add(humidity)
             temperature_smoothed.add(temperature)
+            lux_smoothed.add(lux)
+            solar_watts_smoothed.add(solar_watts)
+
 
             # meta information
             metrics['epoch'] = time.time()              # time the message was sent
@@ -268,6 +273,8 @@ def main():
             metrics['humidity_smoothed'] = humidity_smoothed.get_moving_average()
             metrics['pressure_abs_smoothed'] = pressure_smoothed.get_moving_average()
             metrics['pressure_sea_smoothed'] = sea_level_pressure_smoothed.get_moving_average()
+            metrics['lux_smoothed'] = lux_smoothed.get_moving_average()
+            metrics['solar_watts_smoothed'] = solar_watts_smoothed.get_moving_average()
 
             # CRHUDA rain prediction
             metrics['crhuda_s1'] = s1_avg
