@@ -254,8 +254,8 @@ def main():
 
             # derived data
             metrics['pressure_sea'] = sea_level_pressure    #
-            metrics['dew_point'] = dew_point_c
-            metrics['wet_bulb'] = wet_bulb_c
+            metrics['dew_point_c'] = dew_point_c
+            metrics['wet_bulb_c'] = wet_bulb_c
             metrics['sky_condition'] = sky_condition
             metrics['cloud_base_ft'] = cloud_base_ft
             metrics['crhuda_primed'] = -10      # To be added in the future
