@@ -268,6 +268,8 @@ def main():
             metrics['humidity_smoothed'] = humidity_smoothed.get_moving_average()
             metrics['pressure_abs_smoothed'] = pressure_smoothed.get_moving_average()
             metrics['pressure_sea_smoothed'] = sea_level_pressure_smoothed.get_moving_average()
+
+            # CRHUDA rain prediction
             metrics['crhuda_s1'] = s1_avg
             metrics['crhuda_s2'] = s2_avg
             metrics['crhuda_s2_delta'] = s2_delta
