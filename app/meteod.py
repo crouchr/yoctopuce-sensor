@@ -128,7 +128,9 @@ def main():
             lux = light_sensor.get_lux(lux_sensor)
 
             # Calculate derived data
-            sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
+            #sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
+            sea_level_pressure = mean_sea_level_pressure.abs_to_sea_pressure(pressure, sensor_elevation_m, temperature)
+
             dew_point_c = dew_point.get_dew_point(temperature, humidity)
             wet_bulb_c = wet_bulb.get_wet_bulb(temperature, pressure, dew_point_c)
             cloud_base_ft = cloud_base.calc_cloud_base_ft(temperature, dew_point_c)

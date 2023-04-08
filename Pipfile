@@ -11,7 +11,7 @@ name = "ermin"
 [packages]
 paho-mqtt = "~=1.6"
 yoctopuce = "~=1.10"
-metfuncs = {version="1.0.30", index="ermin"}
+metfuncs = {version="1.0.31", index="ermin"}
 metminifuncs = {version="1.0.7", index="ermin"}
 metpy = "~=1.0"
 pysolar = "~=0.10"
