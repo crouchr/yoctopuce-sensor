@@ -61,11 +61,13 @@ def main():
         sensor_latitude = float(get_env_app.get_sensor_latitude())
         sensor_longitude = float(get_env_app.get_sensor_longitude())
 
-        # smoothed values
+        # smooth all the key metrics - looks so much better in Grafana and for threshold alarming
         pressure_smoothed = moving_averages.MovingAverage(window_len)
         sea_level_pressure_smoothed = moving_averages.MovingAverage(window_len)
         temperature_smoothed = moving_averages.MovingAverage(window_len)
         humidity_smoothed = moving_averages.MovingAverage(window_len)
+        wet_bulb_smoothed = moving_averages.MovingAverage(window_len)
+        dew_point_smoothed = moving_averages.MovingAverage(window_len)
         lux_smoothed = moving_averages.MovingAverage(window_len)
         solar_watts_smoothed = moving_averages.MovingAverage(window_len)
         s1_m_avg = moving_averages.MovingAverage(window_len)
@@ -94,6 +96,7 @@ def main():
             sys.exit('Exiting, unable to register Yoctopuce light sensor')
 
         while True:
+            # Read these variables in the main loop so they can be changed without restarting the container
             vane_height_m = float(get_env_app.get_vane_height_m())
             site_elevation_m = float(get_env_app.get_site_elevation())
             sensor_elevation_m = float(site_elevation_m) + float(vane_height_m)
@@ -199,9 +202,10 @@ def main():
             sea_level_pressure_smoothed.add(sea_level_pressure)
             humidity_smoothed.add(humidity)
             temperature_smoothed.add(temperature)
+            wet_bulb_smoothed.add(wet_bulb_c)
+            dew_point_smoothed.add(dew_point_c)
             lux_smoothed.add(lux)
             solar_watts_smoothed.add(solar_watts)
-
 
             # meta information
             metrics['epoch'] = time.time()              # time the message was sent
@@ -273,6 +277,8 @@ def main():
             # smoothed data
             metrics['temp_c_smoothed'] = temperature_smoothed.get_moving_average()
             metrics['humidity_smoothed'] = humidity_smoothed.get_moving_average()
+            metrics['wet_bulb_smoothed'] = wet_bulb_smoothed.get_moving_average()
+            metrics['dew_point_smoothed'] = dew_point_smoothed.get_moving_average()
             metrics['pressure_abs_smoothed'] = pressure_smoothed.get_moving_average()
             metrics['pressure_sea_smoothed'] = sea_level_pressure_smoothed.get_moving_average()
             metrics['lux_smoothed'] = lux_smoothed.get_moving_average()
