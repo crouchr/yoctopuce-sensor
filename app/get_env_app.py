@@ -139,7 +139,6 @@ def get_site_elevation():
     return site_elevation
 
 
-
 # Use j1900 for live
 def get_mqttd_host():
     """

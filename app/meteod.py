@@ -15,6 +15,9 @@ import get_env_app
 import meteo2_sensor
 import light_sensor
 
+# Temperhum temp/humidity sensor
+import temperhum_sensor
+
 # artifacts (metfuncs)
 import mean_sea_level_pressure
 import dew_point
@@ -83,6 +86,15 @@ def main():
         # client1.on_publish = on_publish                          #assign function to callback
         client1.connect(broker, port)
         s2_avg_last = 0
+
+        # Temperhum device 1
+        temperhum_vendor = '0x1a86'
+        temperhum_product = '0xe025'
+
+        print(f'Temperhum device vendor={temperhum_vendor}, product={temperhum_product}')
+        temperhum_temp_c, temperhum_humidity = temperhum_sensor.read_from_sensor(temperhum_vendor, temperhum_product)
+
+        # FIXME : add smoothed and writew to metrics
 
         # Get the raw data from the Met sensor
         hum_sensor, press_sensor, temperature_sensor, meteo_status_msg = meteo2_sensor.register_meteo2_sensor()
@@ -256,6 +268,10 @@ def main():
             metrics['snow_prognosis_text'] = snow_prognosis_text
             metrics['snow_probability_percent'] = snow_prob_percent
 
+            # Temperhum
+            metrics['temperhum_temp_c'] = temperhum_temp_c
+            metrics['temperhum_humidity'] = temperhum_humidity
+
             # Meteo sensor reading data
             metrics['temp_c'] = temperature                 # sensor height above sea-level
             metrics['humidity'] = humidity
@@ -295,8 +311,8 @@ def main():
             print('====================================')
 
             # publish payload to MQTT topic
-            ret = client1.publish(topic=topic, payload=MQTT_MSG)
-            print('mqtt publish status : ' + ret.__str__())
+            #ret = client1.publish(topic=topic, payload=MQTT_MSG)
+            #print('mqtt publish status : ' + ret.__str__())
 
             time.sleep(poll_secs)
 
