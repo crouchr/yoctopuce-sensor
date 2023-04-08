@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3005a0fc1a53a635d56c6bebaa4e3da8ca6098344ff51e32297f6ad39583aba8"
+            "sha256": "5104360e6c188f036a5d39c954c67d2eb23424446619edaebfca57dbf48e178d"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -587,6 +587,14 @@
                 "sha256:a151b3abb88eda1d4e34a9814df37de2a80e301e68ba0fd856fb9b46bfbbbffb"
             ],
             "version": "==2023.3"
+        },
+        "pyusb": {
+            "hashes": [
+                "sha256:2b4c7cb86dbadf044dfb9d3a4ff69fd217013dbe78a792177a3feb172449ea36",
+                "sha256:a4cc7404a203144754164b8b40994e2849fde1cfff06b08492f12fff9d9de7b9"
+            ],
+            "index": "pypi",
+            "version": "==1.2.1"
         },
         "requests": {
             "hashes": [
