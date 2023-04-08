@@ -16,7 +16,7 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
 
     while True:
         try:
-            print('Entered register_meteo2_sensor()')
+            print('entered register_meteo2_sensor()')
             if bypass_sensor:
                 return None, None, None, 'Emulated that Meteo sensor registered OK'
 
@@ -56,7 +56,7 @@ def register_meteo2_sensor(target='any', bypass_sensor=False):
                 msg = 'meteo sensor not connected'
                 raise Exception(msg)
 
-            print('Meteo sensor registered OK')
+            print('meteo sensor registered OK')
             print(hum_sensor.__str__())
             print(press_sensor.__str__())
             print(temp_sensor.__str__())
