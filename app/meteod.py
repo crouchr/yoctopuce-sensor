@@ -39,6 +39,10 @@ def main():
     try:
         metrics = {}
 
+        # Temperhum device 1 - FIXME : read these from environment, not hard-coded
+        temperhum_vendor = '0x1a86'         # obtain using dmesg
+        temperhum_product = '0xe025'        # obtain using dmesg
+
         bypass_sensor = False    # i.e. set to True if no sensor attached during development
 
         version = get_env.get_version()
@@ -69,8 +73,13 @@ def main():
         sea_level_pressure_smoothed = moving_averages.MovingAverage(window_len)
         temperature_smoothed = moving_averages.MovingAverage(window_len)
         humidity_smoothed = moving_averages.MovingAverage(window_len)
-        wet_bulb_smoothed = moving_averages.MovingAverage(window_len)
         dew_point_smoothed = moving_averages.MovingAverage(window_len)
+        wet_bulb_smoothed = moving_averages.MovingAverage(window_len)
+
+        temperhum_temperature_smoothed = moving_averages.MovingAverage(window_len)
+        temperhum_humidity_smoothed = moving_averages.MovingAverage(window_len)
+        temperhum_dew_point_smoothed = moving_averages.MovingAverage(window_len)
+
         lux_smoothed = moving_averages.MovingAverage(window_len)
         solar_watts_smoothed = moving_averages.MovingAverage(window_len)
         s1_m_avg = moving_averages.MovingAverage(window_len)
@@ -87,16 +96,7 @@ def main():
         client1.connect(broker, port)
         s2_avg_last = 0
 
-        # Temperhum device 1
-        temperhum_vendor = '0x1a86'
-        temperhum_product = '0xe025'
-
-        print(f'Temperhum device vendor={temperhum_vendor}, product={temperhum_product}')
-        temperhum_temp_c, temperhum_humidity = temperhum_sensor.read_from_sensor(temperhum_vendor, temperhum_product)
-
-        # FIXME : add smoothed and writew to metrics
-
-        # Get the raw data from the Met sensor
+        # register the Yoctopuce Meteo sensor
         hum_sensor, press_sensor, temperature_sensor, meteo_status_msg = meteo2_sensor.register_meteo2_sensor()
         print("meteo sensor : " + meteo_status_msg)
         lux_sensor, lux_status_msg = light_sensor.register_light_sensor()
@@ -136,17 +136,22 @@ def main():
             moon_phase_description = moon_phase_tuple[1]
             moon_light_percent = moon_phase_tuple[2]
 
-            # Read raw data from meteo sensor
+            # Read raw data from Yoctopuce meteo sensor
             humidity, pressure, temperature = meteo2_sensor.get_meteo_values(hum_sensor, press_sensor, temperature_sensor, bypass_sensor=bypass_sensor)
 
-            # Read raw data from light sensor
+            # Read raw data from Yoctopuce light sensor
             lux = light_sensor.get_lux(lux_sensor)
 
+            # Read raw data from TEMPerHUM device
+            #print(f'Temperhum device vendor={temperhum_vendor}, product={temperhum_product}')
+            temperhum_temp_c, temperhum_humidity = temperhum_sensor.read_from_sensor(temperhum_vendor,
+                                                                                     temperhum_product, DEBUG=False)
             # Calculate derived data
             #sea_level_pressure = pressure + mean_sea_level_pressure.msl_k_factor(sensor_elevation_m, temperature)
             sea_level_pressure = mean_sea_level_pressure.abs_to_sea_pressure(pressure, sensor_elevation_m, temperature)
 
             dew_point_c = dew_point.get_dew_point(temperature, humidity)
+            temperhum_dew_point_c = dew_point.get_dew_point(temperhum_temp_c, temperhum_humidity)
             wet_bulb_c = wet_bulb.get_wet_bulb(temperature, pressure, dew_point_c)
             cloud_base_ft = cloud_base.calc_cloud_base_ft(temperature, dew_point_c)
             solar_watts = round(solar_funcs.convert_lux_to_watts(lux), 2)
@@ -212,10 +217,17 @@ def main():
             # Smoothed data
             pressure_smoothed.add(pressure)
             sea_level_pressure_smoothed.add(sea_level_pressure)
+
             humidity_smoothed.add(humidity)
             temperature_smoothed.add(temperature)
-            wet_bulb_smoothed.add(wet_bulb_c)
             dew_point_smoothed.add(dew_point_c)
+
+            temperhum_temperature_smoothed.add(temperhum_temp_c)
+            temperhum_humidity_smoothed.add(temperhum_humidity)
+            temperhum_dew_point_smoothed.add(temperhum_dew_point_c)
+
+            wet_bulb_smoothed.add(wet_bulb_c)
+
             lux_smoothed.add(lux)
             solar_watts_smoothed.add(solar_watts)
 
@@ -271,6 +283,7 @@ def main():
             # Temperhum
             metrics['temperhum_temp_c'] = temperhum_temp_c
             metrics['temperhum_humidity'] = temperhum_humidity
+            metrics['temperhum_dew_point_c'] = temperhum_dew_point_c
 
             # Meteo sensor reading data
             metrics['temp_c'] = temperature                 # sensor height above sea-level
@@ -293,8 +306,13 @@ def main():
             # smoothed data
             metrics['temp_c_smoothed'] = temperature_smoothed.get_moving_average()
             metrics['humidity_smoothed'] = humidity_smoothed.get_moving_average()
-            metrics['wet_bulb_smoothed'] = wet_bulb_smoothed.get_moving_average()
             metrics['dew_point_smoothed'] = dew_point_smoothed.get_moving_average()
+            metrics['wet_bulb_smoothed'] = wet_bulb_smoothed.get_moving_average()
+
+            metrics['temperhum_temp_c_smoothed'] = temperhum_temperature_smoothed.get_moving_average()
+            metrics['temperhum_humidity_smoothed'] = temperhum_humidity_smoothed.get_moving_average()
+            metrics['temperhum_dew_point_smoothed'] = temperhum_dew_point_smoothed.get_moving_average()
+
             metrics['pressure_abs_smoothed'] = pressure_smoothed.get_moving_average()
             metrics['pressure_sea_smoothed'] = sea_level_pressure_smoothed.get_moving_average()
             metrics['lux_smoothed'] = lux_smoothed.get_moving_average()

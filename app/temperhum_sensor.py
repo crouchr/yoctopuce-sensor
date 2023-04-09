@@ -1,11 +1,26 @@
 #!/usr/bin/env python3
 # This is a version of the code refactored into a function that can be called
+# There are lots of low-level kernel calls here - maybe they don't work in Docker
+# If so then make this a native application that presents as a Flask service
 
 import usb.core
 import usb.util
-import sys
+# import sys
 
 VERSION = "1.5"
+# [volker-dev app]# lsusb
+# Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+# Bus 001 Device 004: ID 04ca:7066 Lite-On Technology Corp. Integrated Camera
+# Bus 001 Device 003: ID 8087:0a2b Intel Corp. Bluetooth wireless interface
+# Bus 001 Device 014: ID 24e0:0050 Yoctopuce Sarl Yocto-Light-V3
+# Bus 001 Device 013: ID 24e0:0084 Yoctopuce Sarl Yocto-Meteo-V2
+# Bus 001 Device 012: ID 1a86:e025 QinHeng Electronics TEMPerHUM
+# Bus 001 Device 011: ID 1a40:0201 Terminus Technology Inc. FE 2.1 7-port Hub
+# Bus 001 Device 002: ID 3938:1031 MOSART Semi. 2.4G Wireless Mouse
+# Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+
+
 
 # Look for ids using dmesg
 # New USB device found, idVendor=1a86, idProduct=e025, bcdDevice= 1.00
@@ -105,32 +120,31 @@ def twos_complement(value,bits):
 
 # Try to find the Temperhum usb device
 
-def read_from_sensor(vendor, product):
-    DEBUG = False
+def read_from_sensor(vendor, product, DEBUG):
+    # DEBUG = False
     CELSIUS = True
     REATTACH = False
     NOSYBMOLS = False
     RAW = True
 
     Temperhum_Interface = 1
-    #Temperhum_ID = hex(vendor) + ':' + hex(product)
-    #Temperhum_ID = Temperhum_ID.replace( '0x', '')
+    # Temperhum_ID = hex(vendor).__str__() + ':' + hex(product).__str__()
+    # Temperhum_ID = Temperhum_ID.replace('0x', '')
 
     try:
         device = usb.core.find(idVendor=vendor, idProduct=product)
 
     # If it was not found report the error and exit
         if device is None:
-            #print ("Error: Device", Temperhum_ID, "not found")
+            # print(f"Error: Device {Temperhum_ID} not found")
             print("error: Temperhum device not found")
-            return None, None
+            return -99.9, -99.9
         # else:
         #     if DEBUG == True:
         #         print ("Found Device ID", Temperhum_ID)
         #         print ("-" * 20, "Device Information", "-" * 20)
         #         print (device)
         #         print ("-" * 20, "Device Information", "-" * 20)
-
 
         # check if it has a kernel driver, if so set a reattach flag and detach it
         reattach = False
@@ -147,7 +161,7 @@ def read_from_sensor(vendor, product):
 
             if result != None:
                 print("Error: unable to detach kernel driver from Temperhum device")
-                exit(0)
+                return -99.9, -99.9
             else:
                 if DEBUG == True:
                     print("Kernel driver detached ok for Temperhum device")
@@ -157,12 +171,12 @@ def read_from_sensor(vendor, product):
         inf = cfg[Temperhum_Interface, 0]
 
         if DEBUG == True:
-            print("Claiming the Temperhum device interface", Temperhum_Interface, "for use")
+            print(f"Claiming the Temperhum device interface {Temperhum_Interface} for use")
 
         result = usb.util.claim_interface(device, Temperhum_Interface)
         if result != None:
             print("Error: unable to claim the Temperhum interface")
-            return None, None
+            return -99.9, -99.9
         else:
             if DEBUG == True:
                 print("Claimed Temperhum interface ok")
@@ -171,12 +185,12 @@ def read_from_sensor(vendor, product):
         ep_read = inf[0]
         ep_write = inf[1]
         if DEBUG == True:
-            print ("-" * 20, "Read Endpoint Information", "-" * 20)
-            print (ep_read)
-            print ("-" * 20, "Read Endpoint Information", "-" * 20)
-            print ("-" * 20, "Write Endpoint Information", "-" * 20)
-            print (ep_write)
-            print ("-" * 20, "Write Endpoint Information", "-" * 20)
+            print("-" * 20, "Read Endpoint Information", "-" * 20)
+            print(ep_read)
+            print("-" * 20, "Read Endpoint Information", "-" * 20)
+            print("-" * 20, "Write Endpoint Information", "-" * 20)
+            print(ep_write)
+            print("-" * 20, "Write Endpoint Information", "-" * 20)
 
         # Extract the addresses to read from and write to
         ep_read_addr = ep_read.bEndpointAddress
@@ -192,7 +206,7 @@ def read_from_sensor(vendor, product):
             sendit = device.write(ep_write_addr, msg)
         except:
             print("Error: sending request to Temperhum device")
-            return None, None
+            return -99.9, -99.9
 
         if DEBUG == True:
             print("Sending request went ok")
@@ -201,21 +215,22 @@ def read_from_sensor(vendor, product):
         try:
             data = device.read(ep_read_addr, 0x8)
         except:
-            print ("Error: reading data from Temperhum device")
-            return None, None
+            print("Error: reading data from Temperhum device")
+            return -99.9, -99.9
         else:
             if DEBUG == True:
                 print("Data returned from Temperhum device =", data)
 
         # Decode the temperature and humidity
         if CELSIUS == True:
-            temperature = round( ( twos_complement( (data[2] * 256) + data[3],16 ) ) / 100, 1 )
+            temperature = round((twos_complement((data[2] * 256) + data[3], 16)) / 100, 1)
         else:
-            temperature = round( ( twos_complement( (data[2] * 256) + data[3],16 ) ) / 100 * 9/5 + 32, 1 )
+            temperature = round((twos_complement((data[2] * 256) + data[3], 16)) / 100 * 9/5 + 32, 1)
 
-        humidity = int( ( (data[4] * 256) + data[5] ) / 100 )
+        humidity = int(((data[4] * 256) + data[5]) / 100)
 
         return temperature, humidity
+
     # Add symbols unless turned off by --nosymbols parameter
     #     if NOSYMBOLS == False:
         if CELSIUS == True:
@@ -271,19 +286,27 @@ def read_from_sensor(vendor, product):
             result = device.attach_kernel_driver(1)
             if result != None:
                 print("Error: reattaching the kernel driver to Temperhum device")
-                return None, None
+                return -99.9, -99.9
 
     except Exception as e:
         print(f'read_from_sensor() : exception : {e}')
-        return None, None
+        return -99.9, -99.9
 
 
 # test harness
 if __name__ == '__main__':
+    import time
     # Read from looking in dmesg output
-    vendor = '0x1a86'
-    product = '0xe025'
+    # Bus 001 Device 012: ID 1a86:e025 QinHeng Electronics TEMPerHUM
 
-    print(f'Temperhum device vendor={vendor}, product={product}')
-    temperature, humidity = read_from_sensor(vendor, product)
-    print(f'temperature={temperature}, humidity={humidity}')
+    vendor = 0x1a86
+    product = 0xe025
+    print("Temperhum device vendor=0x{0:02x}".format(vendor))
+    print("Temperhum device product=0x{0:02x}".format(product))
+    # print(f'Temperhum device vendor={vendor}, product={product}')
+
+    while True:
+        print('-----------------')
+        temperature, humidity = read_from_sensor(vendor, product, DEBUG=True)
+        print(f'temperature={temperature}, humidity={humidity}')
+        time.sleep(10)
