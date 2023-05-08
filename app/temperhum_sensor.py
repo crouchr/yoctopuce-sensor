@@ -121,7 +121,9 @@ def twos_complement(value,bits):
 # Try to find the Temperhum usb device
 
 def read_from_sensor(vendor, product, DEBUG):
-    # DEBUG = False
+
+def register_sensor(vendor, product, DEBUG):
+
     CELSIUS = True
     REATTACH = False
     NOSYBMOLS = False
@@ -238,7 +240,7 @@ def read_from_sensor(vendor, product, DEBUG):
         else:
             temperature = str(temperature) + "F"
 
-        humidity = str(humidity) + "%"
+        #humidity = str(humidity) + "%"
 
         #print(f'temp={temperature} humidy={humidity}')
 
@@ -304,6 +306,8 @@ if __name__ == '__main__':
     print("Temperhum device vendor=0x{0:02x}".format(vendor))
     print("Temperhum device product=0x{0:02x}".format(product))
     # print(f'Temperhum device vendor={vendor}, product={product}')
+
+    register_sensor(vendor, product, DEBUG=True)
 
     while True:
         print('-----------------')

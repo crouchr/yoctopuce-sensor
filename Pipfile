@@ -15,8 +15,10 @@ metfuncs = {version="1.0.31", index="ermin"}
 metminifuncs = {version="1.0.7", index="ermin"}
 metpy = "~=1.0"
 pysolar = "~=0.10"
-
 pyusb = "~=1.2"
+#digi-xbee = "~=1.4.1"
+#libscrc = "~=1.8.1"
+
 
 #[dev-packages]
 

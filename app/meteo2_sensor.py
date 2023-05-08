@@ -1,9 +1,12 @@
 # See https://www.yoctopuce.com/EN/products/yocto-meteo-v2/doc/METEOMK2.usermanual.html#CHAP5SEC1
 
+# dmesg output
+# Bus 001 Device 014: ID 24e0:0050 Yoctopuce Sarl Yocto-Light-V3
+# Bus 001 Device 013: ID 24e0:0084 Yoctopuce Sarl Yocto-Meteo-V2
+
 from yoctopuce.yocto_humidity import *
 from yoctopuce.yocto_temperature import *
 from yoctopuce.yocto_pressure import *
-
 
 # Must be root to register the sensor
 # SerialNumber: METEOMK2-18FD45
